@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevvUp | Your Learning Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+        }
+        .font-tech {
+            font-family: 'Source-Code-Pro', monospace;
+        }
+        .page { display: none; }
+        .page.active { display: flex; flex-direction: column; }
+
+        .flashcard-container { perspective: 1000px; }
+        .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s; transform-style: preserve-3d; }
+        .is-flipped { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2.5rem; text-align: center; border-radius: 1rem; }
+        .flashcard-back { transform: rotateY(180deg); }
+        
+        .code-window {
+            background-color: #1f2937; border-radius: 0.75rem; padding-top: 2.5rem;
+            position: relative; text-align: left; overflow: hidden; margin-top: 1rem; width: 100%;
+        }
+        .code-window-header {
+            position: absolute; top: 0; left: 0; right: 0; height: 2rem; background-color: #374151;
+            display: flex; align-items: center; padding-left: 0.75rem;
+        }
+        .code-window-dot { height: 0.75rem; width: 0.75rem; border-radius: 9999px; margin-right: 0.5rem; }
+        .code-window-dot.red { background-color: #ef4444; }
+        .code-window-dot.yellow { background-color: #f59e0b; }
+        .code-window-dot.green { background-color: #10b981; }
+        .code-window pre {
+            background-color: transparent; margin: 0; padding: 1rem; white-space: pre-wrap;
+            font-size: 0.9em; color: #d1d5db;
+        }
+        
+        #bookmark-btn.bookmarked svg {
+            fill: #f59e0b;
+            stroke: #f59e0b;
+        }
+
+        /* Badge Modal */
+        #badge-modal {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        /* Cheat Sheet Specific Styles */
+        .cheatsheet-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            color: #22d3ee; /* cyan-400 */
+        }
+        .cheatsheet-content p {
+            margin-bottom: 0.5rem;
+            color: #d1d5db; /* gray-300 */
+        }
+        .cheatsheet-content .code-window {
+             margin-top: 0.5rem;
+             margin-bottom: 1rem;
+        }
+        .cheatsheet-content code {
+            color: #fcd34d; /* amber-300 */
+            font-family: 'Source Code Pro', monospace;
+            font-weight: 600;
+        }
+        .cheatsheet-content table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: collapse;
+        }
+        .cheatsheet-content th, .cheatsheet-content td {
+            border: 1px solid #4b5563; /* gray-600 */
+            padding: 0.75rem;
+            text-align: left;
+        }
+         .cheatsheet-content th {
+            background-color: #374151; /* gray-700 */
+         }
+    </style>
+</head>
+<body class="text-gray-200">
+
+    <!-- App Container -->
+    <div class="w-full max-w-3xl mx-auto p-4 min-h-screen flex flex-col justify-center">
+
+        <!-- ===== Welcome Page ===== -->
+        <div id="welcome-page" class="page active text-center justify-center">
+            <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+                <span class="font-tech">RevvUp</span>
+            </h1>
+            <p class="text-2xl text-gray-300 mt-4 font-tech">Level up your code knowledge.</p>
+            <button id="start-btn" class="mt-12 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg shadow-cyan-500/20 transition-all duration-200 transform hover:scale-110">
+                Start Revising
+            </button>
+            <footer class="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-gray-600">
+                <p class="font-tech text-sm">Created with <span class="text-red-500">&hearts;</span> by Dibyansh</p>
+            </footer>
+        </div>
+
+        <!-- ===== Language Selection Page ===== -->
+        <div id="language-select-page" class="page justify-center">
+             <h2 class="text-3xl font-bold text-center mb-8">Choose Your Language</h2>
+            <div class="grid grid-cols-2 gap-6">
+                <div class="language-card" data-lang="python">
+                    <img src="https://www.svgrepo.com/show/374016/python.svg" class="w-20 h-20" alt="Python Logo">
+                    <span class="mt-2 font-semibold">Python</span>
+                </div>
+                <div class="language-card" data-lang="javascript">
+                    <img src="https://www.svgrepo.com/show/373703/js.svg" class="w-20 h-20" alt="JavaScript Logo">
+                    <span class="mt-2 font-semibold">JavaScript</span>
+                </div>
+                <div class="language-card" data-lang="html">
+                    <img src="https://www.svgrepo.com/show/373669/html.svg" class="w-20 h-20" alt="HTML5 Logo">
+                    <span class="mt-2 font-semibold">HTML5</span>
+                </div>
+                <div class="language-card" data-lang="css">
+                     <img src="https://www.svgrepo.com/show/373535/css.svg" class="w-20 h-20" alt="CSS3 Logo">
+                    <span class="mt-2 font-semibold">CSS3</span>
+                </div>
+            </div>
+             <button class="back-btn" data-target="welcome-page">&larr; Back to Home</button>
+        </div>
+        
+        <!-- ===== Mode Selection Page ===== -->
+        <div id="mode-select-page" class="page justify-center">
+            <h2 class="text-3xl font-bold text-center mb-2">How do you want to revise <span id="selected-lang-mode-span" class="text-cyan-400"></span>?</h2>
+            <p class="text-center text-gray-400 mb-8">Choose your challenge.</p>
+            <div class="space-y-4">
+                <div class="mode-card" data-mode="flashcards">
+                    <h3 class="text-xl font-semibold">Flashcards</h3>
+                    <p class="text-gray-400">Flip through cards to test your knowledge.</p>
+                </div>
+                <div class="mode-card" data-mode="cheatsheet">
+                    <h3 class="text-xl font-semibold">Cheat Sheet</h3>
+                    <p class="text-gray-400">Get a quick overview of key concepts.</p>
+                </div>
+                <div class="mode-card" data-mode="quiz">
+                    <h3 class="text-xl font-semibold">Quiz Me!</h3>
+                    <p class="text-gray-400">Take a quiz and earn XP.</p>
+                </div>
+            </div>
+            <button class="back-btn" data-target="language-select-page">&larr; Change Language</button>
+        </div>
+
+        <!-- ===== Deck Selection Page ===== -->
+        <div id="deck-select-page" class="page justify-center">
+            <h2 class="text-3xl font-bold text-center mb-4">Select a Topic</h2>
+            <button id="view-bookmarks-btn" class="mb-6 bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-2 px-6 rounded-lg shadow-lg shadow-amber-500/20 transition-all duration-200 self-center">View Bookmarks</button>
+            <div id="deck-list" class="space-y-6 w-full">
+                <!-- Deck categories and cards will be dynamically inserted here -->
+            </div>
+            <button class="back-btn" data-target="mode-select-page">&larr; Change Mode</button>
+        </div>
+
+        <!-- ===== Flashcard Page ===== -->
+        <div id="flashcard-page" class="page justify-center">
+            <div class="w-full flex justify-end mb-2">
+                <button id="bookmark-btn" title="Bookmark this card" class="p-2 rounded-full hover:bg-gray-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                </button>
+            </div>
+             <div class="flashcard-container mx-auto w-full h-80 md:h-96">
+                <div id="flashcard-inner" class="flashcard-inner cursor-pointer shadow-2xl shadow-cyan-500/10">
+                    <div id="flashcard-front" class="flashcard-front bg-gray-800 border border-gray-700">
+                        <p id="card-front-text" class="text-2xl md:text-3xl font-semibold font-tech"></p>
+                    </div>
+                    <div id="flashcard-back" class="flashcard-back bg-gray-900 border border-cyan-400">
+                        <div id="card-back-text" class="text-lg md:text-xl font-tech w-full"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="progress-indicator" class="text-center mt-6 text-gray-500 font-tech"></div>
+            <div class="flex justify-between items-center mt-6 w-full max-w-md self-center">
+                <button id="prev-btn" class="nav-btn">Prev</button>
+                <button id="flip-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-4 px-10 rounded-lg shadow-lg shadow-cyan-500/20 transition-all duration-200 transform hover:scale-110">Flip</button>
+                <button id="next-btn" class="nav-btn">Next</button>
+            </div>
+            <button class="back-btn" data-target="deck-select-page">&larr; Change Topic</button>
+        </div>
+        
+        <!-- ===== Bookmarks Page ===== -->
+        <div id="bookmarks-page" class="page justify-center">
+            <h2 class="text-3xl font-bold text-center mb-8">My Bookmarks for <span id="bookmarks-lang-span" class="text-cyan-400"></span></h2>
+            <div id="bookmarks-list" class="space-y-4 w-full">
+                <!-- Bookmarked cards will be dynamically inserted here -->
+            </div>
+            <button class="back-btn" data-target="deck-select-page">&larr; Back to Topics</button>
+        </div>
+
+        <!-- ===== Cheat Sheet Page ===== -->
+        <div id="cheatsheet-page" class="page justify-center py-8">
+            <div id="cheatsheet-content-wrapper" class="bg-gray-900/70 border border-gray-700 p-6 md:p-10 rounded-2xl w-full">
+                <!-- Cheat sheet content will be loaded here -->
+            </div>
+            <button class="back-btn" data-target="mode-select-page">&larr; Change Mode</button>
+        </div>
+        
+        <!-- ===== Quiz Page (Placeholder) ===== -->
+        <div id="quiz-page" class="page justify-center">
+            <h2 class="text-3xl font-bold text-center mb-8">Quiz</h2>
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <p class="font-tech text-xl mb-4">// Quiz questions for this topic will appear here...</p>
+                <p class="mt-6 text-right text-cyan-400 font-bold">XP: <span id="xp-counter">0</span></p>
+            </div>
+             <button class="back-btn" data-target="mode-select-page">&larr; Change Mode</button>
+        </div>
+    </div>
+
+    <!-- Badge Modal -->
+    <div id="badge-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
+        <div class="bg-gray-800 rounded-2xl p-8 text-center shadow-2xl shadow-cyan-500/20 border-2 border-cyan-400 max-w-sm mx-auto">
+            <h3 class="text-2xl font-bold text-cyan-400">Badge Unlocked!</h3>
+            <p id="badge-name" class="mt-2 text-lg"></p>
+            <div class="mt-6 text-7xl">🏆</div>
+            <p class="text-gray-400 mt-4">You've mastered this topic. Great job!</p>
+            <div class="mt-6 flex space-x-4">
+                <button id="download-badge-btn" class="flex-1 bg-gray-700 hover:bg-gray-600 rounded-lg py-2">Download</button>
+                <button id="close-modal-btn" class="flex-1 bg-cyan-500 hover:bg-cyan-600 text-gray-900 rounded-lg py-2">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- DATA ---
+        function createCodeWindow(code) {
+            // Important: Escape HTML characters to prevent rendering issues inside <pre><code>
+            const escapedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return `
+                <div class="code-window">
+                    <div class="code-window-header">
+                        <span class="code-window-dot red"></span>
+                        <span class="code-window-dot yellow"></span>
+                        <span class="code-window-dot green"></span>
+                    </div>
+                    <pre><code>${escapedCode.trim()}</code></pre>
+                </div>
+            `;
+        }
+        const allData = {
+            python: {
+                flashcards: {
+                    "📦 Python Basics": [
+                        { q: "What type of language is Python?", a: "Python is a high-level, interpreted, and dynamically-typed programming language." },
+                        { q: "Who created Python and when?", a: "Python was created by Guido van Rossum and released in 1991." },
+                        { q: "Is Python case-sensitive?", a: "Yes, Python is case-sensitive. `Print` and `print` are different." },
+                        { q: "How do you execute a Python file from the terminal?", a: createCodeWindow(`python filename.py`) },
+                        { q: "What is indentation in Python used for?", a: "Indentation is used to define blocks of code like in `if`, `for`, `while`, and functions." },
+                        { q: "What is the default mode of Python shell?", a: "The interactive mode, also called the REPL (Read-Eval-Print Loop)." },
+                        { q: "What symbol is used for single-line comments?", a: "The `#` symbol." },
+                        { q: "How do you write a multi-line string in Python?", a: createCodeWindow(`'''Multi-line'''\n\n"""Also multi-line"""`) },
+                        { q: "What function is used to take user input in Python?", a: "The `input()` function." },
+                        { q: "How do you write Hello World in Python?", a: createCodeWindow(`print("Hello, World!")`) }
+                    ],
+                    "🔢 Variables & Data Types": [
+                        { q: "How do you create a variable in Python?", a: `Assign a value directly using =` + createCodeWindow(`x = 5\nname = "Dibs"`) },
+                        { q: "Do you need to declare data types in Python?", a: `No, Python automatically detects the type (it's dynamically typed).` + createCodeWindow(`a = 42        # int\nb = 3.14      # float\nc = "hello"   # str`)},
+                        { q: "What are the basic data types in Python?", a: `int, float, str, and bool.` + createCodeWindow(`age = 20           # int\nprice = 19.99      # float\nname = "Dibs"      # str\nis_online = True   # bool`)},
+                        { q: "What data type does input() return?", a: `Always a string (str), even for numbers.` + createCodeWindow(`user_input = input("Enter something: ")\nprint(type(user_input))  # Output: <class 'str'>`)},
+                        { q: "How do you check the data type of a variable?", a: `Use the type() function.` + createCodeWindow(`x = 3.14\nprint(type(x))   # Output: <class 'float'>`)},
+                        { q: "What does isinstance() do?", a: `Checks if a variable is of a specific type.` + createCodeWindow(`x = 10\nprint(isinstance(x, int))  # True`)},
+                        { q: "How do you assign multiple values at once?", a: `Use comma-separated values on both sides.` + createCodeWindow(`a, b = 1, 2\nname, age = "Ommi", 18`)},
+                        { q: "Can a variable change type in Python?", a: `Yes, Python allows dynamic typing.` + createCodeWindow(`x = 10\nx = "now I am a string"`)},
+                        { q: "What is type casting?", a: `Converting one data type to another.` + createCodeWindow(`x = int("5")      # from str to int\ny = str(10)       # from int to str\nz = float("3.14") # from str to float`)},
+                        { q: "What’s the difference between = and == in Python?", a: `= is for assignment, == is for comparison.` + createCodeWindow(`a = 5        # assignment\nprint(a == 5)  # comparison → True`)}
+                    ], 
+                    "➕ Operators": [
+                        { q: "What are the different types of operators in Python?", a: "Arithmetic<br>Assignment<br>Comparison<br>Logical<br>Bitwise<br>Identity<br>Membership" },
+                        { q: "What does the + operator do in Python?", a: "Adds numbers or concatenates strings" + createCodeWindow(`x = 5 + 3           # 8\ngreet = "Hi" + "!"  # "Hi!"`) },
+                        { q: "What does the ** operator do?", a: "Exponentiation (power)" + createCodeWindow(`result = 2 ** 3     # 8 (2 to the power 3)`) },
+                        { q: "What’s the difference between / and //?", a: "/ is float division; // is floor division" + createCodeWindow(`print(7 / 2)   # 3.5\nprint(7 // 2)  # 3`) },
+                        { q: "What does % operator return?", a: "The remainder after division (modulus)" + createCodeWindow(`print(10 % 3)  # 1`) },
+                        { q: "What does == check in Python?", a: "It checks if two values are equal" + createCodeWindow(`a = 10\nprint(a == 10)  # True`) },
+                        { q: "What is the difference between is and ==?", a: "== compares values, is compares identities (memory location)" + createCodeWindow(`a = [1, 2]\nb = [1, 2]\nprint(a == b)  # True\nprint(a is b)  # False`) },
+                        { q: "What are the logical operators in Python?", a: "and, or, not" + createCodeWindow(`x = True\ny = False\nprint(x and y)  # False\nprint(x or y)   # True\nprint(not x)    # False`) },
+                        { q: "How do assignment operators work in Python?", a: "They combine operation and assignment" + createCodeWindow(`x = 5\nx += 3  # same as x = x + 3 → x = 8`) },
+                        { q: "What are membership operators in Python?", a: "in and not in, used to check if a value exists in a sequence" + createCodeWindow(`fruits = ["apple", "banana"]\nprint("apple" in fruits)     # True\nprint("mango" not in fruits) # True`) }
+                    ], 
+                    "🔀 Control Flow (if-elif-else)": [
+                        { q: "What is the syntax of an if statement?", a: "Use if followed by a condition." + createCodeWindow(`if x > 0:\n    print("Positive")`) },
+                        { q: "How do you write an if-else block?", a: createCodeWindow(`if x > 0:\n    print("Positive")\nelse:\n    print("Negative or zero")`) },
+                        { q: "How do you write multiple conditions?", a: "Use elif." + createCodeWindow(`if x > 0:\n    print("Positive")\nelif x == 0:\n    print("Zero")\nelse:\n    print("Negative")`) },
+                        { q: "What is the syntax for a one-liner if expression (ternary)?", a: "Use value_if_true if condition else value_if_false." + createCodeWindow(`result = "Even" if x % 2 == 0 else "Odd"`) },
+                        { q: "How do you check multiple conditions together?", a: "Use and, or, not." + createCodeWindow(`if age > 18 and citizen:\n    print("Eligible")`) },
+                        { q: "Can conditions be nested?", a: "Yes, you can write if inside another if." + createCodeWindow(`if x > 0:\n    if x < 10:\n        print("Single-digit positive")`) },
+                        { q: "What values are considered False in conditions?", a: `0, None, "", [], {}, set().` },
+                        { q: "What happens if you forget indentation?", a: "Python will raise an IndentationError." },
+                        { q: "Can you compare multiple values using chained comparison?", a: "Yes." + createCodeWindow(`if 10 < x < 20:\n    print("x is between 10 and 20")`) },
+                        { q: "What is the output of bool(\"\")?", a: "False — empty string is falsy." + createCodeWindow(`print(bool(""))  # False`) }
+                    ], 
+                    "🔄 Loops (for, while)": [
+                        { q: "What is a for loop used for in Python?", a: "To iterate over a sequence (like list, tuple, string, range, etc)." + createCodeWindow(`for i in range(5):\n    print(i)`) },
+                        { q: "How does a while loop work?", a: "It runs as long as the condition is True." + createCodeWindow(`x = 0\nwhile x < 5:\n    print(x)\n    x += 1`) },
+                        { q: "What does break do in a loop?", a: "It exits the loop immediately." + createCodeWindow(`for i in range(10):\n    if i == 5:\n        break\n    print(i)`) },
+                        { q: "What does continue do?", a: "It skips the current iteration and moves to the next one." + createCodeWindow(`for i in range(5):\n    if i == 2:\n        continue\n    print(i)`) },
+                        { q: "What is the else clause in loops?", a: "It runs only if the loop completes normally (no break)." + createCodeWindow(`for i in range(3):\n    print(i)\nelse:\n    print("Done")`) },
+                        { q: "Can we use else with while loop too?", a: "Yes, same behavior." },
+                        { q: "How do you loop over a list with index?", a: "Use enumerate()." + createCodeWindow(`colors = ["red", "green"]\nfor index, color in enumerate(colors):\n    print(index, color)`) },
+                        { q: "How do you loop over dictionary key-value pairs?", a: "Use .items()." + createCodeWindow(`d = {"a": 1, "b": 2}\nfor k, v in d.items():\n    print(k, v)`) },
+                        { q: "How do you write an infinite loop?", a: createCodeWindow(`while True:\n    print("Looping forever")`) },
+                        { q: "How do you reverse loop?", a: "Use reversed() or negative step in range()." + createCodeWindow(`for i in reversed(range(5)):\n    print(i)`) }
+                    ], 
+                    "ƒ Functions": [
+                        { q: "How do you define a function in Python?", a: createCodeWindow(`def greet():\n    print("Hello!")`) },
+                        { q: "How do you call a function?", a: "Use parentheses." + createCodeWindow(`greet()`) },
+                        { q: "How do you define a function with parameters?", a: createCodeWindow(`def add(a, b):\n    return a + b`) },
+                        { q: "What is a return value?", a: "The value a function sends back using return." },
+                        { q: "What’s the default return value if not specified?", a: "None" },
+                        { q: "What are keyword arguments?", a: "Arguments passed with name=value." + createCodeWindow(`def greet(name):\n    print("Hi", name)\n\ngreet(name="Dibs")`) },
+                        { q: "What is *args?", a: "A way to pass variable number of positional arguments." + createCodeWindow(`def add(*nums):\n    return sum(nums)`) },
+                        { q: "What is **kwargs?", a: "Used to pass variable number of keyword arguments." + createCodeWindow(`def show(**data):\n    print(data)\n\nshow(name="Dibs", age=18)`) },
+                        { q: "What is a docstring?", a: "A string that documents a function. Use triple quotes." + createCodeWindow(`def f():\n    """This is a docstring"""`) },
+                        { q: "Can functions call themselves?", a: "Yes, that’s recursion!" }
+                    ], 
+                    "📋 Lists": [
+                        { q: "How do you define a list in Python?", a: "Using square brackets []." + createCodeWindow(`fruits = ["apple", "banana", "cherry"]`) },
+                        { q: "How do you access elements in a list?", a: "Using index positions (starting from 0)." + createCodeWindow(`print(fruits[1])  # banana`) },
+                        { q: "How do you change an item in a list?", a: "Assign a new value using its index." + createCodeWindow(`fruits[0] = "grape"`) },
+                        { q: "How do you add an item to the end of a list?", a: "Use .append()." + createCodeWindow(`fruits.append("orange")`) },
+                        { q: "How do you insert an item at a specific index?", a: "Use .insert(index, value)." + createCodeWindow(`fruits.insert(1, "kiwi")`) },
+                        { q: "How do you remove an item by value?", a: "Use .remove(value)." + createCodeWindow(`fruits.remove("banana")`) },
+                        { q: "How do you delete an item by index?", a: "Use del or .pop()." + createCodeWindow(`del fruits[0]\n# or\nfruits.pop(2)`) },
+                        { q: "How do you get the length of a list?", a: "Use len()." + createCodeWindow(`print(len(fruits))`) },
+                        { q: "How do you loop through a list?", a: "Use a for loop." + createCodeWindow(`for fruit in fruits:\n    print(fruit)`) },
+                        { q: "How do you check if an item exists in a list?", a: "Use the in keyword." + createCodeWindow(`if "apple" in fruits:\n    print("Found!")`) }
+                    ], 
+                    "🔗 Tuples": [
+                        { q: "What is a tuple in Python?", a: "An immutable ordered collection." + createCodeWindow(`person = ("Alice", 25)`) },
+                        { q: "How do you access elements in a tuple?", a: "Same as lists — with index." + createCodeWindow(`print(person[0])  # Alice`) },
+                        { q: "How do you define a single-element tuple?", a: "Add a comma after the element." + createCodeWindow(`x = (5,)`) },
+                        { q: "Can you modify a tuple after creation?", a: "No. Tuples are immutable." },
+                        { q: "How do you unpack a tuple into variables?", a: "Assign it to multiple variables." + createCodeWindow(`name, age = person`) },
+                        { q: "How do you loop through a tuple?", a: "Same as a list." + createCodeWindow(`for item in person:\n    print(item)`) },
+                        { q: "How do you combine two tuples?", a: "Use the + operator." + createCodeWindow(`t1 = (1, 2)\nt2 = (3, 4)\nprint(t1 + t2)`) },
+                        { q: "Can you slice a tuple?", a: "Yes. Just like lists." + createCodeWindow(`nums = (10, 20, 30, 40)\nprint(nums[1:3])  # (20, 30)`) },
+                        { q: "What is the benefit of using tuples over lists?", a: "They are faster, use less memory, and are safe from modification." },
+                        { q: "How do you check the type of a tuple?", a: "Use the type() function." + createCodeWindow(`print(type((1, 2)))  # <class 'tuple'>`) }
+                    ], 
+                    "📚 Dictionaries": [
+                        { q: "What is a dictionary in Python?", a: "A collection of key:value pairs." + createCodeWindow(`person = {"name": "Ommi", "age": 20}`) },
+                        { q: "How do you access a value in a dictionary?", a: "Use the key inside square brackets or .get()." + createCodeWindow(`print(person["name"])  # Ommi\nprint(person.get("age"))  # 20`) },
+                        { q: "How do you change a value in a dictionary?", a: "Assign a new value to the key." + createCodeWindow(`person["age"] = 21`) },
+                        { q: "How do you add a new key-value pair?", a: "Just assign it." + createCodeWindow(`person["gender"] = "male"`) },
+                        { q: "How do you remove a key-value pair?", a: "Use del or .pop()." + createCodeWindow(`del person["age"]\n# OR\nperson.pop("gender")`) },
+                        { q: "How do you loop through a dictionary?", a: "Use .items() for key-value pairs." + createCodeWindow(`for key, value in person.items():\n    print(key, value)`) },
+                        { q: "How do you get only the keys or values?", a: "Use .keys() or .values()." + createCodeWindow(`person.keys()   # dict_keys(['name'])\nperson.values() # dict_values(['Ommi'])`) },
+                        { q: "How do you check if a key exists?", a: "Use in keyword." + createCodeWindow(`"name" in person  # True`) },
+                        { q: "Can dictionary keys be of any data type?", a: "Keys must be immutable types (e.g., string, number, tuple)." },
+                        { q: "How do you clear all items from a dictionary?", a: "Use .clear()." + createCodeWindow(`person.clear()`) }
+                    ], 
+                    "✨ Sets": [
+                        { q: "What is a set in Python?", a: "An unordered collection of unique elements." + createCodeWindow(`s = {1, 2, 3}`) },
+                        { q: "How do you create an empty set?", a: "Use set() (not {} — that creates a dictionary!)." + createCodeWindow(`empty = set()`) },
+                        { q: "How do you add an element to a set?", a: "Use .add() method." + createCodeWindow(`s.add(4)`) },
+                        { q: "How do you remove an element from a set?", a: "Use .remove() or .discard()." + createCodeWindow(`s.remove(2)   # Raises error if not found\ns.discard(2)  # No error`) },
+                        { q: "Can sets have duplicates?", a: "No, all items are unique." + createCodeWindow(`{1, 2, 2, 3}  # becomes {1, 2, 3}`) },
+                        { q: "How do you check membership in a set?", a: "Use in keyword." + createCodeWindow(`2 in s  # True`) },
+                        { q: "How do you find the union of two sets?", a: "Use | or .union()." + createCodeWindow(`a = {1, 2}; b = {2, 3}\nprint(a | b)  # {1, 2, 3}`) },
+                        { q: "How do you find the intersection?", a: "Use & or .intersection()." + createCodeWindow(`print(a & b)  # {2}`) },
+                        { q: "How do you find the difference?", a: "Use - or .difference()." + createCodeWindow(`print(a - b)  # {1}`) },
+                        { q: "How do you clear all elements from a set?", a: "Use .clear()." + createCodeWindow(`s.clear()`) }
+                    ], 
+                    "✂️ String Manipulation": [
+                        { q: "How do you define a string in Python?", a: "Use single ' or double \" quotes." + createCodeWindow(`name = "Dibs"`) },
+                        { q: "How do you access characters in a string?", a: "Use index (starting from 0)." + createCodeWindow(`print(name[0])  # D`) },
+                        { q: "Are strings mutable in Python?", a: "No. Strings are immutable." },
+                        { q: "How do you slice a string?", a: "Use [start:end]." + createCodeWindow(`print(name[1:3])  # "ib"`) },
+                        { q: "How do you get the length of a string?", a: "Use len() function." + createCodeWindow(`print(len(name))  # 4`) },
+                        { q: "How do you convert a string to uppercase/lowercase?", a: "Use .upper() or .lower()." + createCodeWindow(`print(name.upper())  # DIBS`) },
+                        { q: "How do you replace parts of a string?", a: "Use .replace(old, new)." + createCodeWindow(`msg = "hello world"\nprint(msg.replace("world", "Dibs"))`) },
+                        { q: "How do you remove whitespace from ends?", a: "Use .strip()." + createCodeWindow(`s = "  hey!  "\nprint(s.strip())  # "hey!"`) },
+                        { q: "How do you check if a word is in a string?", a: "Use in keyword." + createCodeWindow(`"hello" in msg  # True`) },
+                        { q: "How do you join a list of strings into one string?", a: "Use .join()." + createCodeWindow(`words = ["Python", "is", "fun"]\nprint(" ".join(words))`) }
+                    ], 
+                    "🔄 Type Casting": [
+                        { q: "What is type casting in Python?", a: "Converting the value of one data type to another." + createCodeWindow(`x = int("5")  # string to integer`) },
+                        { q: "How do you convert a float to an integer?", a: "Using int() function. It truncates the decimal part." + createCodeWindow(`int(3.99)  # Output: 3`) },
+                        { q: "What happens when you convert a string that’s not a number using int()?", a: "A ValueError is raised." + createCodeWindow(`int("abc")  # ValueError`) },
+                        { q: "Convert an integer to a string.", a: "Use str() function." + createCodeWindow(`str(123)  # Output: '123'`) },
+                        { q: "How to convert a string to a float?", a: "Use float()" + createCodeWindow(`float("3.14")  # Output: 3.14`) },
+                        { q: "Can you convert a string like \"5.0\" directly to int?", a: "No. First convert to float, then to int:" + createCodeWindow(`int(float("5.0"))  # Output: 5`) },
+                        { q: "How to convert a list to a tuple?", a: "Use the tuple() function." + createCodeWindow(`tuple([1, 2, 3])`) },
+                        { q: "How to convert a number to a boolean?", a: "bool(0) returns False, anything else returns True." + createCodeWindow(`bool(7)  # True`) },
+                        { q: "Convert a list of strings to a list of integers.", a: "Use list comprehension:" + createCodeWindow(`nums = ["1", "2", "3"]\n[int(x) for x in nums]`) },
+                        { q: "What is implicit type casting?", a: "Python automatically converts a value during an operation." + createCodeWindow(`a = 2 + 3.0  # Output: 5.0 (int + float = float)`) }
+                    ], 
+                    "⌨️ Input/Output": [
+                        { q: "How do you take input from the user in Python?", a: "Use input() function." + createCodeWindow(`name = input("Enter your name: ")`) },
+                        { q: "What is the return type of input()?", a: "Always returns a string." },
+                        { q: "How do you convert user input to an integer?", a: "Use int(input(...))" + createCodeWindow(`age = int(input("Enter age: "))`) },
+                        { q: "How to print multiple values in one line?", a: "Separate them with commas in print()" + createCodeWindow(`print("Age:", age)`) },
+                        { q: "How do you customize the end of a print statement?", a: "Use the end argument." + createCodeWindow(`print("Hello", end="!")`) },
+                        { q: "How do you format strings with variables?", a: "Use f-strings:" + createCodeWindow(`name = "Ommi"\nprint(f"Hello, {name}")`) },
+                        { q: "How do you print without spaces in between items?", a: "Use sep argument:" + createCodeWindow(`print("Python", "C", "Java", sep="-")`) },
+                        { q: "How do you take multiple inputs in one line?", a: "Use .split() method." + createCodeWindow(`a, b = input().split()`) },
+                        { q: "How to print with 2 decimal places?", a: "Use formatted strings:" + createCodeWindow(`pi = 3.14159\nprint(f"{pi:.2f}")  # Output: 3.14`) },
+                        { q: "How to get list of integers as input in one line?", a: "Use map and split:" + createCodeWindow(`nums = list(map(int, input().split()))`) }
+                    ],
+                    "📁 File Handling": [
+                        { q: "How do you open a file in Python?", a: `Use open(). 'r' means read mode.` + createCodeWindow(`f = open("data.txt", "r")`)},
+                        { q: "What are the different file modes in Python?", a: `'r': Read (default)<br>'w': Write (overwrites)<br>'a': Append<br>'x': Create file<br>'b': Binary mode<br>'t': Text mode (default)`},
+                        { q: "How do you read the content of a file?", a: createCodeWindow(`f = open("data.txt", "r")\ncontent = f.read()`)},
+                        { q: "How do you read line by line?", a: `f.readlines() returns a list of lines.` + createCodeWindow(`f = open("data.txt", "r")\nlines = f.readlines()`)},
+                        { q: "How to write into a file (overwrite mode)?", a: createCodeWindow(`f = open("data.txt", "w")\nf.write("Hello, world!")`)},
+                        { q: "How to append to an existing file?", a: createCodeWindow(`f = open("data.txt", "a")\nf.write("\\nAnother line.")`)},
+                        { q: "Why should you close a file after opening it?", a: `To free system resources and ensure data is properly written.`},
+                        { q: "How to safely open files using with statement?", a: `It auto-closes the file.` + createCodeWindow(`with open("data.txt", "r") as f:\n    data = f.read()`)},
+                        { q: "What does seek() do in file handling?", a: `Moves the file cursor to a specific byte position.` + createCodeWindow(`f.seek(0)  # Go back to the beginning`)},
+                        { q: "How to read only the first line of a file?", a: createCodeWindow(`line = f.readline()`)},
+                        { q: "What happens if the file doesn’t exist in 'r' mode?", a: `Python raises a FileNotFoundError.`},
+                        { q: "What is the difference between read() and readlines()?", a: `read() → reads entire content as a string<br>readlines() → returns a list of lines`},
+                        { q: "How to write multiple lines at once?", a: createCodeWindow(`f.writelines(["Line1\\n", "Line2\\n"])`)},
+                        { q: "How to check if a file exists before opening?", a: createCodeWindow(`import os\nos.path.exists("data.txt")`)},
+                        { q: "What is binary file mode used for?", a: `Reading/writing non-text files like images or PDFs.` + createCodeWindow(`f = open("image.jpg", "rb")`)}
+                    ], 
+                    "⚠️ Error Handling (Exceptions)": [
+                        { q: "What is error handling in Python?", a: `It’s the process of catching and managing exceptions during program execution.`},
+                        { q: "What is the syntax of a basic try-except block?", a: createCodeWindow(`try:\n    x = 1 / 0\nexcept ZeroDivisionError:\n    print("Can't divide by zero!")`)},
+                        { q: "What’s the purpose of else in error handling?", a: `Runs if no exception occurs.` + createCodeWindow(`try:\n    print("OK")\nexcept:\n    print("Error")\nelse:\n    print("No errors occurred")`)},
+                        { q: "What is the use of finally?", a: `Executes always, whether an exception occurs or not.` + createCodeWindow(`finally:\n    print("Cleanup code")`)},
+                        { q: "What’s the difference between Exception and Error?", a: `All errors are exceptions, but not all exceptions are programming bugs. Exception is the base class.`},
+                        { q: "How to catch any exception without specifying the type?", a: createCodeWindow(`try:\n    ...\nexcept Exception as e:\n    print("Error:", e)`)},
+                        { q: "Name a few common exceptions.", a: `ZeroDivisionError<br>TypeError<br>FileNotFoundError<br>IndexError<br>ValueError`},
+                        { q: "What does raise do in Python?", a: `It manually throws an exception.` + createCodeWindow(`raise ValueError("Invalid input")`)},
+                        { q: "Can you handle multiple exceptions?", a: `Yes:` + createCodeWindow(`try:\n    ...\nexcept (TypeError, ValueError) as e:\n    print(e)`)},
+                        { q: "What is a custom exception?", a: `Your own exception class:` + createCodeWindow(`class MyError(Exception):\n    pass`)},
+                        { q: "Why use specific exceptions instead of a general one?", a: `To handle errors more precisely and avoid catching unexpected issues.`},
+                        { q: "What happens if an exception is not handled?", a: `The program crashes and shows a traceback error.`},
+                        { q: "Use try-except for safe division.", a: createCodeWindow(`try:\n    x = int(input())\n    print(10 / x)\nexcept ZeroDivisionError:\n    print("Don't divide by zero!")`)},
+                        { q: "Can finally be used without except?", a: `Yes:` + createCodeWindow(`try:\n    ...\nfinally:\n    print("Always runs")`)},
+                        { q: "Can you nest try-except blocks?", a: `Yes, Python allows nested error handling for more control.`}
+                    ], 
+                    "📦 Modules & Packages": [
+                        { q: "What is a module in Python?", a: `A module is a Python file (.py) containing functions, classes, or variables that can be imported into other programs.`},
+                        { q: "How do you import a module?", a: createCodeWindow(`import math\nprint(math.sqrt(16))  # Output: 4.0`)},
+                        { q: "What’s the difference between import and from?", a: `<b>import math</b> imports the entire module.<br><b>from math import sqrt</b> imports only the sqrt function.`},
+                        { q: "How to rename a module while importing?", a: createCodeWindow(`import numpy as np\nprint(np.array([1, 2, 3]))`)},
+                        { q: "What is __name__ == \"__main__\" used for?", a: `To ensure code runs only when a file is executed directly, not when imported as a module.`},
+                        { q: "How to view all functions in a module?", a: `Use dir():` + createCodeWindow(`import math\nprint(dir(math))`)},
+                        { q: "What are built-in modules? Give examples.", a: `Pre-installed modules like math, random, os, datetime.`},
+                        { q: "How do you create a custom module?", a: `Save a .py file with functions, then import it.` + createCodeWindow(`# mymodule.py\ndef greet(name):\n    return f"Hello, {name}"\n\n# main.py\nimport mymodule\nprint(mymodule.greet("Dibs"))`)},
+                        { q: "What are packages in Python?", a: `Packages are directories containing multiple modules and an __init__.py file.`},
+                        { q: "How do you import a function from a sub-package?", a: createCodeWindow(`from package.subpackage.module import function_name`)},
+                        { q: "What does __init__.py do in a package?", a: `Marks the directory as a Python package. Can be empty or used to initialize the package.`},
+                        { q: "How to list all installed modules/packages?", a: createCodeWindow(`pip list`)},
+                        { q: "How to install external modules?", a: `With pip:` + createCodeWindow(`pip install requests`)},
+                        { q: "How to uninstall a package?", a: createCodeWindow(`pip uninstall package_name`)},
+                        { q: "Can a module contain classes and functions together?", a: `Yes. A module can have both classes and functions.`}
+                    ], 
+                    "λ Lambda, Map, Filter, Reduce": [
+                        { q: "What is a lambda function?", a: "An anonymous, one-line function:" + createCodeWindow(`square = lambda x: x * x\nprint(square(5))  # Output: 25`) },
+                        { q: "How is lambda different from def?", a: "<b>lambda</b>: one-liner, anonymous<br><b>def</b>: named, multiline, supports multiple statements" },
+                        { q: "What does map() do?", a: "Applies a function to all items in an iterable:" + createCodeWindow(`nums = [1, 2, 3]\nsquares = list(map(lambda x: x**2, nums))`) },
+                        { q: "Use map() with a built-in function.", a: createCodeWindow(`names = ["dibs", "ommi"]\ncapitalized = list(map(str.upper, names))`) },
+                        { q: "What does filter() do?", a: "Filters elements based on a condition:" + createCodeWindow(`nums = [1, 2, 3, 4]\nevens = list(filter(lambda x: x % 2 == 0, nums))`) },
+                        { q: "What does reduce() do?", a: "Combines items using a rolling computation." + createCodeWindow(`from functools import reduce\ntotal = reduce(lambda x, y: x + y, [1, 2, 3])`) },
+                        { q: "Difference between map() and filter()?", a: "<b>map()</b>: transforms all items<br><b>filter()</b>: selects some items based on a condition" },
+                        { q: "What does this return?", a: createCodeWindow(`list(map(lambda x: x*2, [1, 2, 3]))\n# Output: [2, 4, 6]`) },
+                        { q: "Can lambdas have multiple arguments?", a: "Yes:" + createCodeWindow(`sum_two = lambda a, b: a + b`) },
+                        { q: "Use filter() to remove empty strings.", a: createCodeWindow(`names = ["Dibs", "", "Ommi"]\nnon_empty = list(filter(None, names))`) },
+                        { q: "Can map and lambda be replaced with list comprehension?", a: "Yes:" + createCodeWindow(`# map\nlist(map(lambda x: x**2, nums))\n\n# list comp\n[x**2 for x in nums]`) },
+                        { q: "Why use lambda over def sometimes?", a: "For short, one-time functions — more concise and readable." },
+                        { q: "Use map() with multiple iterables.", a: createCodeWindow(`a = [1, 2]\nb = [10, 20]\nlist(map(lambda x, y: x + y, a, b))  # Output: [11, 22]`) },
+                        { q: "Use reduce() to find product of a list.", a: createCodeWindow(`from functools import reduce\nreduce(lambda x, y: x * y, [1, 2, 3, 4])  # Output: 24`) },
+                        { q: "Can you assign a lambda to a variable?", a: "Yes:" + createCodeWindow(`double = lambda x: x * 2\nprint(double(3))  # Output: 6`) }
+                    ], 
+                    "⚡ List Comprehensions": [
+                        { q: "What is list comprehension in Python?", a: "A concise way to create lists using a single line of code, often replacing for loops." },
+                        { q: "Basic syntax of list comprehension?", a: createCodeWindow(`[expression for item in iterable]`) },
+                        { q: "Example: Square of numbers from 0 to 4?", a: createCodeWindow(`squares = [x**2 for x in range(5)]`) },
+                        { q: "Can list comprehension include if conditions?", a: "Yes. Syntax:" + createCodeWindow(`[expression for item in iterable if condition]`) },
+                        { q: "Example: Even numbers from 0 to 10 using list comprehension?", a: createCodeWindow(`evens = [x for x in range(11) if x % 2 == 0]`) },
+                        { q: "How to use if-else inside list comprehension?", a: "Use ternary syntax:" + createCodeWindow(`[true_expr if condition else false_expr for item in iterable]`) },
+                        { q: "Example: Replace negative numbers with 0?", a: createCodeWindow(`nums = [-2, 3, -1, 5]\nresult = [x if x > 0 else 0 for x in nums]`) },
+                        { q: "List comprehension with string manipulation?", a: createCodeWindow(`names = ["alice", "BOB", "Tom"]\nlower_names = [name.lower() for name in names]`) },
+                        { q: "Can list comprehension be nested?", a: "Yes, for 2D structures:" + createCodeWindow(`matrix = [[1,2],[3,4]]\nflat = [num for row in matrix for num in row]`) },
+                        { q: "How to create a list of tuples using list comprehension?", a: createCodeWindow(`pairs = [(x, y) for x in range(2) for y in range(2)]`) },
+                        { q: "How to filter out None values using list comprehension?", a: createCodeWindow(`data = [1, None, 3]\ncleaned = [x for x in data if x is not None]`) },
+                        { q: "Difference between list comprehension and generator expression?", a: "List comprehension returns a list, generator uses () and returns an iterator (lazy evaluation)." },
+                        { q: "How to use enumerate() in list comprehension?", a: createCodeWindow(`data = ['a', 'b', 'c']\nindexed = [f\"{i}:{val}\" for i, val in enumerate(data)]`) },
+                        { q: "Performance benefit of list comprehension?", a: "Faster than for loops due to optimized C-level implementation and less overhead." },
+                        { q: "Use list comprehension to extract digits from a string?", a: createCodeWindow(`text = "a1b2c3"\ndigits = [int(ch) for ch in text if ch.isdigit()]`) }
+                    ], 
+                    "🌐 Scope (Global/Local)": [
+                        { q: "What is scope in Python?", a: "Scope defines the region in which a variable is recognized and accessible." },
+                        { q: "What is a local variable?", a: "A variable declared inside a function, accessible only within that function." },
+                        { q: "What is a global variable?", a: "A variable declared outside all functions, accessible throughout the program." },
+                        { q: "Example of a local variable?", a: createCodeWindow(`def greet():\n    name = "Alice"  # local\n    print(name)`) },
+                        { q: "Example of a global variable?", a: createCodeWindow(`x = 5  # global\ndef show():\n    print(x)`) },
+                        { q: "Can a local variable shadow a global one?", a: "Yes. A local variable with the same name overrides the global within its function." },
+                        { q: "How to modify a global variable inside a function?", a: "Use the global keyword:" + createCodeWindow(`def change():\n    global x\n    x = 10`) },
+                        { q: "What does the global keyword do?", a: "It tells Python that a variable inside a function refers to the global variable." },
+                        { q: "What is the nonlocal keyword used for?", a: "Used to modify variables in the nearest enclosing scope (not global)." },
+                        { q: "Example: Use of nonlocal in nested functions?", a: createCodeWindow(`def outer():\n    x = 10\n    def inner():\n        nonlocal x\n        x += 1\n    inner()\n    print(x)`) },
+                        { q: "What is LEGB rule?", a: "It stands for Local → Enclosing → Global → Built-in — the order in which Python looks for variables." },
+                        { q: "Can a global variable be read without using global?", a: "Yes, reading is allowed, but modifying requires the global keyword." },
+                        { q: "What happens if you assign to a variable without global inside a function?", a: "Python treats it as a local variable, even if it shares a name with a global one." },
+                        { q: "Example of built-in scope?", a: "Functions like len(), max(), and keywords like True, False exist in built-in scope." },
+                        { q: "How to inspect variable scope?", a: "Use globals() and locals() to view current global and local symbol tables." }
+                    ], 
+                    "🔧 Built-in Functions": [
+                        { q: "What does the zip() function do?", a: "Combines elements from multiple iterables into tuples." + createCodeWindow(`zip([1,2], ['a','b']) → [(1, 'a'), (2, 'b')]`) },
+                        { q: "What is the use of the any() function?", a: "Returns True if any element in an iterable is True." + createCodeWindow(`any([0, False, 5]) → True`) },
+                        { q: "What is the difference between any() and all()?", a: "all() returns True only if all elements are True." + createCodeWindow(`all([1, True, 5]) → True\nany([0, False]) → False`) },
+                        { q: "What does enumerate() do?", a: "Adds a counter to an iterable." + createCodeWindow(`for i, val in enumerate(['a','b']): print(i,val)`) },
+                        { q: "What does eval() do? Why should you be careful?", a: "Parses and runs a Python expression from a string. (Warning) Can execute malicious code if input isn't sanitized." + createCodeWindow(`eval("2 + 2") → 4`) },
+                        { q: "How does filter() work?", a: "Filters items using a function that returns True/False." + createCodeWindow(`filter(lambda x: x > 0, [-1, 0, 1, 2]) → [1, 2]`) },
+                        { q: "How is map() different from filter()?", a: "map() transforms items; filter() selects them." + createCodeWindow(`map(lambda x: x*2, [1, 2]) → [2, 4]`) },
+                        { q: "What does reversed() do?", a: "Returns a reverse iterator." + createCodeWindow(`list(reversed([1,2,3])) → [3,2,1]`) },
+                        { q: "What is sorted() used for?", a: "Returns a new sorted list (doesn't modify original)." + createCodeWindow(`sorted([3, 1, 2]) → [1, 2, 3]`) },
+                        { q: "How does isinstance() help?", a: "Checks if an object is an instance of a type." + createCodeWindow(`isinstance(5, int) → True`) },
+                        { q: "What does len() return?", a: "The number of items in a container." + createCodeWindow(`len("abc") → 3`) },
+                        { q: "When do you use type()?", a: "To get the type of an object." + createCodeWindow(`type([1,2]) → <class 'list'>`) },
+                        { q: "What does id() return?", a: "Memory address of the object (unique ID)." + createCodeWindow(`id("hello")`) },
+                        { q: "What is round() used for?", a: "Rounds a number to a given number of decimal places." + createCodeWindow(`round(3.456, 2) → 3.46`) },
+                        { q: "What’s the use of input() in functions?", a: "Takes user input as a string." + createCodeWindow(`input("Enter your name: ")`) }
+                    ], 
+                    "🎲 Math & Random Modules": [
+                        { q: "How do you import the math module?", a: createCodeWindow(`import math`) },
+                        { q: "What does math.sqrt(x) do?", a: "Returns the square root of x." + createCodeWindow(`math.sqrt(9) → 3.0`) },
+                        { q: "How do you get the value of π (pi)?", a: `math.pi` },
+                        { q: "What does math.pow(a, b) do?", a: "Raises a to the power of b." + createCodeWindow(`math.pow(2, 3) → 8.0`) },
+                        { q: "How is math.pow() different from **?", a: "math.pow() always returns a float; ** may return int." },
+                        { q: "How to calculate factorial using math?", a: createCodeWindow(`math.factorial(5) → 120`) },
+                        { q: "How to convert degrees to radians?", a: createCodeWindow(`math.radians(180) → π`) },
+                        { q: "How to convert radians to degrees?", a: createCodeWindow(`math.degrees(math.pi) → 180.0`) },
+                        { q: "What is math.floor(x)?", a: "Rounds x down to nearest integer." + createCodeWindow(`math.floor(3.7) → 3`) },
+                        { q: "What is math.ceil(x)?", a: "Rounds x up to nearest integer." + createCodeWindow(`math.ceil(3.1) → 4`) },
+                        { q: "How to compute absolute value using math?", a: "math.fabs(x) returns float absolute value." + createCodeWindow(`math.fabs(-5) → 5.0`) },
+                        { q: "What is math.gcd(a, b) used for?", a: "Finds the greatest common divisor." + createCodeWindow(`math.gcd(8, 12) → 4`) },
+                        { q: "How to compute logarithms?", a: "math.log(x, base)" + createCodeWindow(`math.log(8, 2) → 3.0`) },
+                        { q: "What is math.exp(x)?", a: "Returns e^x." + createCodeWindow(`math.exp(1) ≈ 2.718`) },
+                        { q: "How to get the remainder of a division?", a: "math.remainder(x, y) returns IEEE 754-style remainder." + createCodeWindow(`math.remainder(7, 2) → 1.0`) },
+                        { q: "How do you import the random module?", a: createCodeWindow(`import random`) },
+                        { q: "What does random.random() do?", a: "Returns a random float between 0.0 and 1.0 (inclusive of 0, exclusive of 1)." + createCodeWindow(`random.random() → 0.6743...`) },
+                        { q: "How to get a random float between two values?", a: "Use random.uniform(a, b)" + createCodeWindow(`random.uniform(1.5, 3.5) → 2.73...`) },
+                        { q: "How do you get a random integer in a range?", a: "Use random.randint(a, b) (both inclusive)" + createCodeWindow(`random.randint(1, 10) → 7`) },
+                        { q: "What’s the difference between randint() and randrange()?", a: "randint(a, b) includes both ends, randrange(start, stop) excludes stop." + createCodeWindow(`random.randrange(1, 5) → 1, 2, 3 or 4`) },
+                        { q: "How to select a random item from a list?", a: "Use random.choice(seq)" + createCodeWindow(`random.choice(['apple', 'banana']) → 'banana'`) },
+                        { q: "How to select multiple random items?", a: "Use random.choices(population, k=n)" + createCodeWindow(`random.choices([1,2,3], k=2) → [2, 2] (with replacement)`) },
+                        { q: "How to get a sample without replacement?", a: "Use random.sample(population, k)" + createCodeWindow(`random.sample([1,2,3,4], 2) → [1, 4] (unique values only)`) },
+                        { q: "What does random.shuffle() do?", a: "Shuffles a list in-place." + createCodeWindow(`random.shuffle(my_list) # changes order permanently.`) },
+                        { q: "How do you generate a random even number from 0 to 100?", a: createCodeWindow(`random.randrange(0, 101, 2)`) },
+                        { q: "How can you make random outputs repeatable?", a: "Set a seed using random.seed(n)" + createCodeWindow(`random.seed(42) # makes random values reproducible.`) },
+                        { q: "Can you generate cryptographic random numbers using random?", a: "No! Use secrets module for secure tokens/passwords." },
+                        { q: "How to shuffle a copy of a list?", a: "Use random.sample(lst, len(lst)) instead of shuffle()" },
+                        { q: "What does setting a seed actually do?", a: "It initializes the internal state of the random generator for consistent results." },
+                        { q: "How to simulate a coin toss using random?", a: createCodeWindow(`random.choice(['Heads', 'Tails'])`) }
+                    ],
+                    "🏛️ Classes & Objects": [], "🛠️ Constructors": [], "👨‍👩‍👧‍👦 Inheritance": [], "🎭 Polymorphism": [], "💊 Encapsulation": []
+                }
+            },
+            javascript: {
+                flashcards: {
+                    "General": [ { q: "What is a 'closure'?", a: "A function that remembers the variables from the scope where it was created." }, { q: "Explain `==` vs `===`.", a: "`==` is for loose equality (type coercion). `===` is for strict equality (value and type)." }, { q: "What is a Promise?", a: "An object representing the eventual completion or failure of an async operation."} ]
+                }
+            }
+        };
+
+        const cheatSheets = {
+            python: `
+                <div class="cheatsheet-content">
+                    <h2 class="text-3xl font-bold text-center mb-6 text-cyan-400">🐍 Python Cheatsheet for Revision 📘</h2>
+                    
+                    <h3>🔤 1. Variables & Data Types</h3>
+                    <p>Variables are like containers. You store stuff in them 🧃</p>
+                    ${createCodeWindow(`name = "Dibyansh"     # str (text)
+age = 20              # int (whole number)
+height = 5.9          # float (decimal)
+is_coder = True       # bool (True/False)`)}
+                    <p>Want to know the type? Use <code>type()</code> 👇</p>
+                    ${createCodeWindow(`print(type(name))  # <class 'str'>`)}
+
+                    <h3>🔁 2. Loops</h3>
+                    <p>🌀 <strong>for loop</strong> – when you know how many times</p>
+                    ${createCodeWindow(`for i in range(1, 6):
+    print("Hi", i)`)}
+                    <p>🔁 <strong>while loop</strong> – when you loop until a condition is false</p>
+                    ${createCodeWindow(`count = 0
+while count < 3:
+    print("Looping...", count)
+    count += 1`)}
+                    <p>⛔ Don’t forget to change your condition or it loops forever 😨</p>
+
+                    <h3>🔎 3. If-Else Conditions</h3>
+                    <p>Making decisions like a boss 🧠</p>
+                    ${createCodeWindow(`temp = 35
+
+if temp > 30:
+    print("It's hot 🥵")
+elif temp == 30:
+    print("Just right 🌤️")
+else:
+    print("Cool 😎")`)}
+
+                    <h3>🧺 4. Lists – Ordered, changeable, and allows duplicates</h3>
+                    ${createCodeWindow(`fruits = ["🍎", "🍌", "🍇"]
+print(fruits[0])         # 🍎
+fruits.append("🍍")      # Add to end
+fruits.remove("🍌")      # Remove item
+print(len(fruits))       # Count items`)}
+                    <p>🛠 Handy tools: <code>fruits.sort()</code>, <code>fruits.reverse()</code></p>
+
+                    <h3>📚 5. Tuples & Sets</h3>
+                    <p>✅ <strong>Tuple</strong> – like a list, but can't change it (immutable)</p>
+                    ${createCodeWindow(`t = (1, 2, 3)
+print(t[0])`)}
+                    <p>🚫 <strong>Set</strong> – only unique values, no duplicates allowed</p>
+                    ${createCodeWindow(`s = {1, 2, 3, 2}
+print(s)  # {1, 2, 3}`)}
+
+                    <h3>📖 6. Dictionaries – key-value pairs 🔐</h3>
+                    ${createCodeWindow(`person = {
+    "name": "Ommi",
+    "age": 20
+}
+
+print(person["name"])   # Ommi
+person["city"] = "Bhubaneswar"`)}
+                    <p>🧠 <code>dict.keys()</code>, <code>dict.values()</code>, <code>dict.items()</code> are useful!</p>
+
+                    <h3>⚙️ 7. Functions</h3>
+                    <p>Reusable code blocks 📦</p>
+                    ${createCodeWindow(`def greet(name):
+    return "Hi " + name
+
+print(greet("Dibs"))  # Hi Dibs`)}
+                    <p>Use <code>return</code> to give back a value, otherwise it just prints.</p>
+
+                    <h3>🧠 8. Built-in Functions You Should Know</h3>
+                    <table>
+                        <thead><tr><th>Function</th><th>What it does</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>len(x)</code></td><td>Count length</td></tr>
+                            <tr><td><code>type(x)</code></td><td>Check type</td></tr>
+                            <tr><td><code>abs(x)</code></td><td>Absolute value</td></tr>
+                            <tr><td><code>sum(x)</code></td><td>Add items in an iterable</td></tr>
+                            <tr><td><code>round(x)</code></td><td>Round floats</td></tr>
+                            <tr><td><code>sorted(x)</code></td><td>Return sorted list</td></tr>
+                        </tbody>
+                    </table>
+                    <p>Example:</p>
+                    ${createCodeWindow(`nums = [5, 3, 9]
+print(sorted(nums))  # [3, 5, 9]`)}
+
+                    <h3>📦 9. Modules (import stuff!)</h3>
+                    <p>🔢 <strong>math</strong> module</p>
+                    ${createCodeWindow(`import math
+print(math.sqrt(25))     # 5.0
+print(math.pi)           # 3.14159...`)}
+                    <p>🎲 <strong>random</strong> module</p>
+                    ${createCodeWindow(`import random
+print(random.randint(1, 10))`)}
+
+                    <h3>📄 10. File Handling</h3>
+                    <p>📝 Create/write a file:</p>
+                    ${createCodeWindow(`with open("hello.txt", "w") as f:
+    f.write("Hello World!")`)}
+                    <p>📖 Read from a file:</p>
+                    ${createCodeWindow(`with open("hello.txt", "r") as f:
+    content = f.read()
+    print(content)`)}
+
+                    <h3>🚫 11. Exception Handling – Catching Errors!</h3>
+                    ${createCodeWindow(`try:
+    result = 10 / 0
+except ZeroDivisionError:
+    print("Can't divide by 0!")
+finally:
+    print("This runs anyway.")`)}
+                    <p>✅ Common errors: <code>ZeroDivisionError</code>, <code>ValueError</code>, <code>TypeError</code>, <code>IndexError</code></p>
+
+                    <h3>🔥 12. List Comprehension</h3>
+                    <p>Shortcuts for creating lists</p>
+                    ${createCodeWindow(`squares = [x*x for x in range(1, 6)]
+print(squares)  # [1, 4, 9, 16, 25]`)}
+                     <p>Add an <code>if</code>:</p>
+                    ${createCodeWindow(`even = [x for x in range(10) if x % 2 == 0]`)}
+
+                    <h3>⚡ 13. Lambda Functions</h3>
+                    <p>One-liner anonymous functions</p>
+                    ${createCodeWindow(`add = lambda a, b: a + b
+print(add(2, 3))  # 5`)}
+                    <p>💡 Great for quick functions or with <code>map()</code> & <code>filter()</code></p>
+
+                    <h3>🎁 14. *args and **kwargs</h3>
+                     <p>Flexible Function Parameters</p>
+                    ${createCodeWindow(`def show_args(*args):
+    print(args)
+
+def show_kwargs(**kwargs):
+    print(kwargs)
+
+show_args(1, 2, 3)  # (1, 2, 3)
+show_kwargs(name="Dibs", age=20)
+# {'name': 'Dibs', 'age': 20}`)}
+
+                    <h3>🧱 15. Object-Oriented Programming (Classes)</h3>
+                    ${createCodeWindow(`class Student:
+    def __init__(self, name):
+        self.name = name
+
+    def greet(self):
+        print("Hi, I'm", self.name)
+
+s = Student("Ommi")
+s.greet()`)}
+                    <p>🧠 <code>__init__()</code> is like a constructor. 💡 <code>self</code> refers to the current object.</p>
+                </div>
+            `
+        };
+
+
+        const topicStructure = {
+            python: {
+                "🟢 Beginner-Level": ["📦 Python Basics", "🔢 Variables & Data Types", "➕ Operators", "🔀 Control Flow (if-elif-else)", "🔄 Loops (for, while)", "ƒ Functions", "📋 Lists", "🔗 Tuples", "📚 Dictionaries", "✨ Sets", "✂️ String Manipulation", "🔄 Type Casting", "⌨️ Input/Output"],
+                "🟡 Intermediate-Level": ["📁 File Handling", "⚠️ Error Handling (Exceptions)", "📦 Modules & Packages", "λ Lambda, Map, Filter, Reduce", "⚡ List Comprehensions", "🌐 Scope (Global/Local)", "🔧 Built-in Functions", "🎲 Math & Random Modules"],
+                "🔵 Object-Oriented Programming": ["🏛️ Classes & Objects", "🛠️ Constructors", "👨‍👩‍👧‍👦 Inheritance", "🎭 Polymorphism", "💊 Encapsulation"]
+            }
+        };
+        
+        // --- DOM Elements ---
+        const pages = document.querySelectorAll('.page');
+        const startBtn = document.getElementById('start-btn');
+        const languageCards = document.querySelectorAll('.language-card');
+        const selectedLangModeSpan = document.getElementById('selected-lang-mode-span');
+        const modeCards = document.querySelectorAll('.mode-card');
+        const deckList = document.getElementById('deck-list');
+        const backBtns = document.querySelectorAll('.back-btn');
+        const flashcardInner = document.getElementById('flashcard-inner');
+        const cardFrontText = document.getElementById('card-front-text');
+        const cardBackText = document.getElementById('card-back-text');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const bookmarkBtn = document.getElementById('bookmark-btn');
+        const viewBookmarksBtn = document.getElementById('view-bookmarks-btn');
+        const bookmarksList = document.getElementById('bookmarks-list');
+        const bookmarksLangSpan = document.getElementById('bookmarks-lang-span');
+        const cheatsheetContentWrapper = document.getElementById('cheatsheet-content-wrapper');
+
+
+        // --- STATE ---
+        let selectedLanguage = '';
+        let selectedLanguageName = '';
+        let selectedMode = '';
+        let selectedDeck = '';
+        let currentCardIndex = 0;
+        let isFlipped = false;
+        let userXP = 0;
+
+        // --- DATA PERSISTENCE FUNCTIONS ---
+        function getProgress() {
+            return JSON.parse(localStorage.getItem('revvup_progress')) || {};
+        }
+
+        function saveProgress(lang, mode, deck, index) {
+            const progress = getProgress();
+            if (!progress[lang]) progress[lang] = {};
+            if (!progress[lang][mode]) progress[lang][mode] = {};
+            
+            const currentHighest = progress[lang][mode][deck] || -1;
+            progress[lang][mode][deck] = Math.max(currentHighest, index);
+            
+            localStorage.setItem('revvup_progress', JSON.stringify(progress));
+        }
+
+        function getBookmarks() {
+            return JSON.parse(localStorage.getItem('revvup_bookmarks')) || {};
+        }
+
+        function saveBookmarks(bookmarksObj) {
+            localStorage.setItem('revvup_bookmarks', JSON.stringify(bookmarksObj));
+        }
+
+        // --- UI FUNCTIONS ---
+
+        function showPage(pageId) {
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function populateTopics(lang) {
+            const structure = topicStructure[lang];
+            deckList.innerHTML = ''; 
+            const progress = getProgress();
+            
+            if (!structure) {
+                const topics = Object.keys(allData[lang][selectedMode] || {});
+                const topicGrid = document.createElement('div');
+                topicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+                topics.forEach(topicName => {
+                     const totalCards = allData[lang][selectedMode][topicName]?.length || 0;
+                     const highestIndexReached = progress[lang]?.[selectedMode]?.[topicName] ?? -1;
+                     topicGrid.appendChild(createTopicCard(topicName, highestIndexReached, totalCards));
+                });
+                deckList.appendChild(topicGrid);
+            } else {
+                for (const category in structure) {
+                    const categoryContainer = document.createElement('div');
+                    const categoryTitle = document.createElement('h3');
+                    categoryTitle.className = 'text-2xl font-bold text-cyan-400 mb-4';
+                    categoryTitle.textContent = category;
+                    categoryContainer.appendChild(categoryTitle);
+                    
+                    const topicGrid = document.createElement('div');
+                    topicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+                    structure[category].forEach(topicName => {
+                        const totalCards = allData[lang][selectedMode][topicName]?.length || 0;
+                        const highestIndexReached = progress[lang]?.[selectedMode]?.[topicName] ?? -1;
+                        topicGrid.appendChild(createTopicCard(topicName, highestIndexReached, totalCards));
+                    });
+                    
+                    categoryContainer.appendChild(topicGrid);
+                    deckList.appendChild(categoryContainer);
+                }
+            }
+            addTopicCardListeners();
+        }
+        
+        function createTopicCard(topicName, highestIndexReached, totalCards) {
+            const topicCard = document.createElement('div');
+            topicCard.className = "deck-card bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-cyan-400 hover:bg-gray-700 cursor-pointer transition-all duration-200 shadow-lg text-left flex flex-col justify-between";
+            topicCard.dataset.deck = topicName;
+            
+            const completedCount = highestIndexReached + 1;
+            const percentage = totalCards > 0 ? (completedCount / totalCards) * 100 : 0;
+
+            topicCard.innerHTML = `
+                <div>
+                    <h4 class="font-semibold">${topicName}</h4>
+                </div>
+                <div class="mt-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-gray-500 font-tech">PROGRESS</span>
+                        <span class="text-xs text-gray-400 font-tech">${completedCount > totalCards ? totalCards : completedCount}/${totalCards}</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-1.5 mt-1">
+                        <div class="bg-cyan-500 h-1.5 rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            `;
+            return topicCard;
+        }
+
+        function loadAndShowFeaturePage() {
+            if (selectedMode === 'flashcards') {
+                loadFlashcards();
+                showPage('flashcard-page');
+            } else if (selectedMode === 'cheatsheet') {
+                cheatsheetContentWrapper.innerHTML = cheatSheets[selectedLanguage] || '<p class="text-center text-gray-500">Cheat sheet for this language is coming soon!</p>';
+                showPage('cheatsheet-page');
+            } else if (selectedMode === 'quiz') {
+                document.getElementById('xp-counter').textContent = userXP;
+                showPage('quiz-page');
+            }
+        }
+
+        function loadFlashcards() {
+            if (isFlipped) {
+                isFlipped = false;
+                flashcardInner.classList.remove('is-flipped');
+            }
+            setTimeout(() => {
+                currentCardIndex = 0;
+                displayCard();
+            }, 150);
+        }
+
+        function displayCard() {
+            const cards = allData[selectedLanguage][selectedMode][selectedDeck];
+            if (!cards || cards.length === 0) {
+                 cardFrontText.innerHTML = "Coming Soon!";
+                 cardBackText.innerHTML = "This topic deck is under construction.";
+                 progressIndicator.textContent = '0 / 0';
+                 bookmarkBtn.style.display = 'none';
+                 return;
+            };
+            bookmarkBtn.style.display = 'block';
+            const card = cards[currentCardIndex];
+            cardFrontText.innerHTML = card.q;
+            cardBackText.innerHTML = card.a;
+            updateProgress();
+            saveProgress(selectedLanguage, selectedMode, selectedDeck, currentCardIndex);
+            updateBookmarkButtonState();
+        }
+        
+        function updateProgress() {
+            const totalCards = allData[selectedLanguage][selectedMode][selectedDeck].length;
+            progressIndicator.textContent = `${currentCardIndex + 1} / ${totalCards}`;
+        }
+
+        function nextCard() {
+            const cards = allData[selectedLanguage][selectedMode][selectedDeck];
+            if (currentCardIndex < cards.length - 1) {
+                currentCardIndex++;
+                if (isFlipped) {
+                    isFlipped = false;
+                    flashcardInner.classList.remove('is-flipped');
+                }
+                setTimeout(displayCard, 150);
+            }
+        }
+
+        function prevCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                 if (isFlipped) {
+                    isFlipped = false;
+                    flashcardInner.classList.remove('is-flipped');
+                }
+                setTimeout(displayCard, 150);
+            }
+        }
+
+        function toggleBookmark() {
+            const cards = allData[selectedLanguage][selectedMode][selectedDeck];
+            const card = cards[currentCardIndex];
+            const bookmarkKey = `${selectedLanguage}-${selectedDeck}-${card.q}`;
+            
+            const bookmarks = getBookmarks();
+            if (bookmarks[bookmarkKey]) {
+                delete bookmarks[bookmarkKey];
+            } else {
+                bookmarks[bookmarkKey] = {
+                    lang: selectedLanguage,
+                    mode: selectedMode,
+                    deck: selectedDeck,
+                    q: card.q,
+                    a: card.a
+                };
+            }
+            saveBookmarks(bookmarks);
+            updateBookmarkButtonState();
+        }
+
+        function updateBookmarkButtonState() {
+            const cards = allData[selectedLanguage][selectedMode][selectedDeck];
+            if (!cards || cards.length === 0) return;
+            const card = cards[currentCardIndex];
+            const bookmarkKey = `${selectedLanguage}-${selectedDeck}-${card.q}`;
+            const bookmarks = getBookmarks();
+            
+            if (bookmarks[bookmarkKey]) {
+                bookmarkBtn.classList.add('bookmarked');
+            } else {
+                bookmarkBtn.classList.remove('bookmarked');
+            }
+        }
+
+        function displayBookmarksPage() {
+            bookmarksList.innerHTML = '';
+            bookmarksLangSpan.textContent = selectedLanguageName;
+            
+            const bookmarks = getBookmarks();
+            const langBookmarkKeys = Object.keys(bookmarks).filter(key => key.startsWith(`${selectedLanguage}-`));
+
+            if (langBookmarkKeys.length === 0) {
+                bookmarksList.innerHTML = `<p class="text-center text-gray-500">You haven't bookmarked any cards for this language yet.</p>`;
+            } else {
+                langBookmarkKeys.forEach(key => {
+                    const cardData = bookmarks[key];
+                    
+                    if (cardData) {
+                        const cardEl = document.createElement('div');
+                        cardEl.className = 'bg-gray-800 p-4 rounded-lg border border-gray-700';
+                        cardEl.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <p class="text-xs text-amber-400 font-tech">${cardData.deck}</p>
+                                    <p class="font-semibold mt-1">${cardData.q}</p>
+                                    <div class="mt-2 text-gray-400 text-sm">${cardData.a}</div>
+                                </div>
+                                <button class="remove-bookmark-btn p-1 text-gray-500 hover:text-red-500" data-bookmark-key="${key}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        `;
+                        bookmarksList.appendChild(cardEl);
+                    }
+                });
+
+                document.querySelectorAll('.remove-bookmark-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const keyToRemove = e.currentTarget.dataset.bookmarkKey;
+                        const currentBookmarks = getBookmarks();
+                        delete currentBookmarks[keyToRemove];
+                        saveBookmarks(currentBookmarks);
+                        displayBookmarksPage();
+                    });
+                });
+            }
+            
+            showPage('bookmarks-page');
+        }
+        
+        // --- EVENT LISTENERS ---
+        
+        startBtn.addEventListener('click', () => showPage('language-select-page'));
+
+        languageCards.forEach(card => {
+            card.addEventListener('click', () => {
+                selectedLanguage = card.dataset.lang;
+                selectedLanguageName = card.querySelector('span').textContent;
+                selectedLangModeSpan.textContent = selectedLanguageName;
+                showPage('mode-select-page');
+            });
+        });
+
+        modeCards.forEach(card => {
+            card.addEventListener('click', () => {
+                selectedMode = card.dataset.mode;
+                if (selectedMode === 'flashcards') {
+                    populateTopics(selectedLanguage);
+                    showPage('deck-select-page');
+                } else {
+                   loadAndShowFeaturePage();
+                }
+            });
+        });
+
+        function addTopicCardListeners() {
+            document.querySelectorAll('.deck-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    selectedDeck = card.dataset.deck;
+                    loadAndShowFeaturePage();
+                });
+            });
+        }
+        
+        backBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetPageId = e.target.dataset.target;
+                if (targetPageId === 'deck-select-page') {
+                    populateTopics(selectedLanguage);
+                }
+                showPage(targetPageId)
+            });
+        });
+
+        prevBtn.addEventListener('click', prevCard);
+        nextBtn.addEventListener('click', nextCard);
+        bookmarkBtn.addEventListener('click', toggleBookmark);
+        viewBookmarksBtn.addEventListener('click', displayBookmarksPage);
+        document.getElementById('flip-btn').addEventListener('click', () => flashcardInner.classList.toggle('is-flipped'));
+        flashcardInner.addEventListener('click', () => flashcardInner.classList.toggle('is-flipped'));
+
+        // --- Initial Style Setup for Reused Components ---
+        function applyStyles() {
+            const baseButtonStyles = "bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105";
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = baseButtonStyles);
+            
+            const cardBaseStyles = "bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-cyan-400 hover:bg-gray-700 cursor-pointer transition-all duration-200 shadow-lg";
+            document.querySelectorAll('.language-card').forEach(card => card.className = `${cardBaseStyles} flex flex-col items-center justify-center text-cyan-400`);
+            document.querySelectorAll('.mode-card').forEach(card => card.className = `${cardBaseStyles} text-left`);
+            
+            const quizOptionStyles = "w-full text-left bg-gray-700 hover:bg-gray-600 p-3 rounded-lg transition-colors duration-200";
+            document.querySelectorAll('.quiz-option').forEach(btn => btn.className = quizOptionStyles);
+            
+            const backBtnStyles = "bg-gray-800 text-gray-400 hover:text-cyan-400 border border-gray-700 hover:border-cyan-500 font-semibold py-2 px-5 rounded-lg transition-all duration-200 self-center mt-12";
+            const backBtnStyleArray = backBtnStyles.split(' ');
+            document.querySelectorAll('.back-btn').forEach(btn => {
+                btn.classList.add(...backBtnStyleArray);
+            });
+        }
+        
+        // --- INITIAL LOAD ---
+        applyStyles();
+    </script>
+</body>
+</html>
