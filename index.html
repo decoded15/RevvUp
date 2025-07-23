@@ -74,6 +74,16 @@
             color: #fcd34d; /* amber-300 */
             font-family: 'Source Code Pro', monospace;
             font-weight: 600;
+            background-color: #374151;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+        /* Remove special styling for code inside quiz questions */
+        #quiz-question-text code {
+            color: inherit;
+            background-color: transparent;
+            padding: 0;
+            font-weight: 600;
         }
         .cheatsheet-content table {
             width: 100%;
@@ -290,12 +300,35 @@
             <button class="back-btn" data-target="mode-select-page">&larr; Change Mode</button>
         </div>
 
+        <!-- ===== Quiz Instructions Page ===== -->
+        <div id="quiz-instructions-page" class="page justify-center items-center text-center">
+            <div class="bg-gray-800 p-8 rounded-2xl shadow-lg max-w-lg">
+                <h2 class="text-3xl font-bold text-cyan-400 mb-4">Quiz Instructions</h2>
+                <ul class="text-left space-y-3 text-gray-300">
+                    <li>✔️ This quiz has <strong id="instr-total-questions" class="text-white"></strong> questions.</li>
+                    <li>➕ You get <strong class="text-green-400">+10 points</strong> for each correct answer.</li>
+                    <li>➖ You lose <strong class="text-red-400">-3 points</strong> for each incorrect answer.</li>
+                    <li>🎯 Total possible score: <strong id="instr-total-points" class="text-white"></strong> points.</li>
+                    <li>🏆 To pass, you must score at least <strong class="text-cyan-400">70%</strong> (that's <strong id="instr-passing-score" class="text-cyan-400"></strong> points).</li>
+                </ul>
+                <button id="start-quiz-btn" class="mt-8 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg">
+                    Start Quiz
+                </button>
+            </div>
+        </div>
+
         <!-- ===== Live Quiz Page ===== -->
         <div id="live-quiz-page" class="page justify-center">
             <div class="w-full max-w-2xl">
                 <div class="flex justify-between items-center mb-4">
                     <div class="text-lg font-bold">Score: <span id="quiz-score">0</span></div>
-                    <div id="quiz-timer" class="font-bold text-2xl text-cyan-400 font-tech">00:00</div>
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div id="quiz-timer" class="font-bold text-2xl text-cyan-400 font-tech">00:00</div>
+                    </div>
+                    <button id="end-quiz-btn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">End Quiz</button>
                 </div>
                 <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
                     <p class="text-gray-400 text-sm">Question <span id="quiz-question-number">1</span> of <span id="quiz-total-questions">25</span></p>
@@ -316,7 +349,7 @@
                 <div class="speedometer-mask"></div>
                 <div id="speedometer-needle" class="speedometer-needle"></div>
                 <div class="absolute inset-0 flex flex-col justify-end items-center pb-4">
-                     <span id="final-score-text" class="text-4xl font-bold text-cyan-400">0/0</span>
+                     <span id="final-score-text" class="text-4xl font-bold text-cyan-400">0 / 0</span>
                 </div>
             </div>
             <p id="final-time-taken" class="text-lg mt-2 font-tech"></p>
@@ -669,7 +702,11 @@
                         { q: "What does setting a seed actually do?", a: "It initializes the internal state of the random generator for consistent results." },
                         { q: "How to simulate a coin toss using random?", a: createCodeWindow(`random.choice(['Heads', 'Tails'])`) }
                     ],
-                    "🏛️ Classes & Objects": [], "🛠️ Constructors": [], "👨‍👩‍👧‍👦 Inheritance": [], "🎭 Polymorphism": [], "💊 Encapsulation": []
+                    "🏛️ Classes & Objects": [ { q: "What is a class?", a: "A blueprint for creating objects." } ], 
+                    "🛠️ Constructors": [ { q: "What is the `__init__` method?", a: "A constructor method that is called when an object is created." } ], 
+                    "👨‍👩‍👧‍👦 Inheritance": [ { q: "What is inheritance?", a: "A way to form new classes using classes that have already been defined." } ], 
+                    "🎭 Polymorphism": [ { q: "What is polymorphism?", a: "The ability of an object to take on many forms." } ], 
+                    "💊 Encapsulation": [ { q: "What is encapsulation?", a: "Restricting access to methods and variables to prevent direct data modification." } ]
                 },
                 quiz: {
                     beginner: [
@@ -689,7 +726,7 @@
                         { q: "Which data structure does not allow duplicate values?", options: ["List", "Set", "Dictionary"], correct: 1 },
                         { q: "What is the output of `bool(0)`?", options: ["True", "False", "None"], correct: 1 },
                         { q: "How would you convert a float to int?", options: ["int(float_num)", "float(int)", "str(int)"], correct: 0 },
-                        { q: "What is the output of this code?<br><div class=\"code-window\"><div class=\"code-window-header\"><span class=\"code-window-dot red\"></span><span class=\"code-window-dot yellow\"></span><span class=\"code-window-dot green\"></span></div><pre><code>x = 5\nif x == 5:\n    print(\"Yes\")</code></pre></div>", options: ["Yes", "True", "5"], correct: 0 },
+                        { q: "What is the output of this code?" + createCodeWindow("x = 5\nif x == 5:\n    print(\"Yes\")"), options: ["Yes", "True", "5"], correct: 0 },
                         { q: "What is `range(3)` equal to when converted to a list?", options: ["[0, 1, 2]", "[1, 2, 3]", "[1, 2]"], correct: 0 },
                         { q: "Which function returns absolute value?", options: ["absolute()", "abs()", "fabs()"], correct: 1 },
                         { q: "How do you get user input?", options: ["scan()", "input()", "get()"], correct: 1 },
@@ -699,7 +736,33 @@
                         { q: "Which symbol is used for modulus (remainder)?", options: ["%", "//", "&"], correct: 0 },
                         { q: "Which of these is a valid function call?", options: ["print[\"Hello\"]", "print(\"Hello\")", "print = \"Hello\""], correct: 1 }
                     ],
-                    intermediate: [],
+                    intermediate: [
+                        { q: "What does the following code do?" + createCodeWindow('f = open("data.txt", "w")\nf.write("Hello")\nf.close()'), options: ["Prints Hello", "Writes Hello to data.txt", "Nothing happens"], correct: 1 },
+                        { q: "What happens if the file doesn't exist in read mode?" + createCodeWindow('f = open("nofile.txt", "r")'), options: ["Creates a new file", "Raises FileNotFoundError", "Returns None"], correct: 1 },
+                        { q: "What is the output?" + createCodeWindow('try:\n    x = 5 / 0\nexcept ZeroDivisionError:\n    print("Oops!")'), options: ["Oops!", "0", "Error"], correct: 0 },
+                        { q: "What will be printed?" + createCodeWindow('def add(x, y):\n    return x + y\n\nprint(add(2, 3))'), options: ["2 + 3", "5", "None"], correct: 1 },
+                        { q: "What’s the output?" + createCodeWindow('nums = [1, 2, 3, 4]\nsquares = [x**2 for x in nums]\nprint(squares)'), options: ["[2, 4, 6, 8]", "[1, 4, 9, 16]", "[1, 2, 3, 4]"], correct: 1 },
+                        { q: "Which code snippet correctly handles a file safely?", options: ["<code>f = open(\"a.txt\")<br># no close</code>", createCodeWindow('with open("a.txt") as f:\n    data = f.read()'), "<code>open(\"a.txt\", \"close\")</code>"], correct: 1 },
+                        { q: "What does this return?" + createCodeWindow('list(map(lambda x: x + 1, [1, 2, 3]))'), options: ["[2, 3, 4]", "[1, 2, 3]", "[0, 1, 2]"], correct: 0 },
+                        { q: "Output of this?" + createCodeWindow('print((lambda x: x * x)(4))'), options: ["16", "8", "4"], correct: 0 },
+                        { q: "What's printed?" + createCodeWindow('nums = [1, 2, 3, 4]\neven = list(filter(lambda x: x % 2 == 0, nums))\nprint(even)'), options: ["[2, 4]", "[1, 3]", "[1, 2, 3, 4]"], correct: 0 },
+                        { q: "Output?" + createCodeWindow('import math\nprint(math.floor(3.9))'), options: ["4", "3", "3.9"], correct: 1 },
+                        { q: "Output?" + createCodeWindow('import random\nrandom.seed(1)\nprint(random.randint(1, 10))'), options: ["Random value", "Always 2", "Error"], correct: 1 },
+                        { q: "What does this code print?" + createCodeWindow('x = 10\ndef change():\n    x = 20\n    print(x)\n\nchange()\nprint(x)'), options: ["20 10", "10 20", "20 20"], correct: 0 },
+                        { q: "What’s printed?" + createCodeWindow('global_var = 5\ndef show():\n    global global_var\n    global_var += 1\n\nshow()\nprint(global_var)'), options: ["5", "6", "Error"], correct: 1 },
+                        { q: "What is returned?" + createCodeWindow('def f():\n    local_var = 10\n    return local_var\n\nprint(f())'), options: ["None", "10", "local_var"], correct: 1 },
+                        { q: "Output of this?" + createCodeWindow('nums = [1, 2, 3]\ndoubled = [x*2 for x in nums if x > 1]\nprint(doubled)'), options: ["[2, 4, 6]", "[4, 6]", "[1, 2, 3]"], correct: 1 },
+                        { q: "What is the result?" + createCodeWindow('list1 = [1, 2]\nlist2 = [3, 4]\nprint(list1 + list2)'), options: ["[1, 2, 3, 4]", "[4, 6]", "[[1,2],[3,4]]"], correct: 0 },
+                        { q: "What’s the output?" + createCodeWindow('def demo(x, *args):\n    return args\n\nprint(demo(1, 2, 3))'), options: ["(2, 3)", "[2, 3]", "2 3"], correct: 0 },
+                        { q: "What’s printed?" + createCodeWindow('def power(x, y=2):\n    return x ** y\n\nprint(power(3))'), options: ["6", "9", "3"], correct: 1 },
+                        { q: "What is the result of this?" + createCodeWindow('print(len("Hello World!"))'), options: ["11", "12", "10"], correct: 1 },
+                        { q: "Output?" + createCodeWindow('print("Hello".replace("H", "J"))'), options: ["Jello", "Hello", "Hjello"], correct: 0 },
+                        { q: "Result of this?" + createCodeWindow('round(3.456, 2)'), options: ["3.45", "3.46", "3.44"], correct: 1 },
+                        { q: "What does this return?" + createCodeWindow('"abc".upper()'), options: ["abc", "ABC", "Abc"], correct: 1 },
+                        { q: "What does <code>reduce()</code> require?", options: ["2 arguments", "A function + iterable", "Just an iterable"], correct: 1 },
+                        { q: "What does this print?" + createCodeWindow('import math\nprint(math.pow(2, 3))'), options: ["8.0", "8", "6"], correct: 0 },
+                        { q: "Output?" + createCodeWindow('print(type((1)))'), options: ["&lt;class 'tuple'&gt;", "&lt;class 'int'&gt;", "&lt;class 'list'&gt;"], correct: 1 }
+                    ],
                     oop: [],
                     marathon: []
                 }
@@ -725,7 +788,7 @@ is_coder = True       # bool (True/False)`)}
                     <p>Want to know the type? Use <code>type()</code> 👇</p>
                     ${createCodeWindow(`print(type(name))  # <class 'str'>`)}
 
-                    <h3>� 2. Loops</h3>
+                    <h3>🔁 2. Loops</h3>
                     <p>🌀 <strong>for loop</strong> – when you know how many times</p>
                     ${createCodeWindow(`for i in range(1, 6):
     print("Hi", i)`)}
@@ -905,6 +968,11 @@ s.greet()`)}
         const finalMessageEl = document.getElementById('final-message');
         const finalTimeTakenEl = document.getElementById('final-time-taken');
         const tryAgainBtn = document.getElementById('try-again-btn');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const endQuizBtn = document.getElementById('end-quiz-btn');
+        const instrTotalQuestions = document.getElementById('instr-total-questions');
+        const instrTotalPoints = document.getElementById('instr-total-points');
+        const instrPassingScore = document.getElementById('instr-passing-score');
 
 
         // --- STATE ---
@@ -921,6 +989,9 @@ s.greet()`)}
         let quizQuestions = [];
         let currentQuizQuestionIndex = 0;
         let quizStartTime;
+        let selectedQuizDeckName = '';
+        let totalPossibleScore = 0;
+        let passingScore = 0;
 
 
         // --- DATA PERSISTENCE FUNCTIONS ---
@@ -1175,13 +1246,27 @@ s.greet()`)}
         }
 
         // --- QUIZ FUNCTIONS ---
-        function startQuiz(deckName) {
-            const allQuizQuestions = allData[selectedLanguage].quiz[deckName] || [];
-            if (allQuizQuestions.length === 0) {
+        function showQuizInstructions(deckName) {
+            selectedQuizDeckName = deckName;
+            const questionsForDeck = allData[selectedLanguage].quiz[deckName] || [];
+            if (questionsForDeck.length === 0) {
                 alert("This quiz is not available yet.");
                 return;
             }
+            
+            totalPossibleScore = questionsForDeck.length * 10;
+            passingScore = Math.ceil(totalPossibleScore * 0.7);
 
+            instrTotalQuestions.textContent = questionsForDeck.length;
+            instrTotalPoints.textContent = totalPossibleScore;
+            instrPassingScore.textContent = passingScore;
+
+            showPage('quiz-instructions-page');
+        }
+
+        function startQuiz() {
+            const allQuizQuestions = allData[selectedLanguage].quiz[selectedQuizDeckName] || [];
+            
             // Shuffle questions
             quizQuestions = [...allQuizQuestions].sort(() => Math.random() - 0.5);
             
@@ -1201,14 +1286,13 @@ s.greet()`)}
             const question = quizQuestions[currentQuizQuestionIndex];
             
             quizQuestionNumEl.textContent = currentQuizQuestionIndex + 1;
-            // Use innerHTML to correctly render code tags if any
             quizQuestionTextEl.innerHTML = question.q;
             
             quizOptionsContainer.innerHTML = '';
             question.options.forEach((option, index) => {
                 const button = document.createElement('button');
                 button.className = 'option-btn w-full text-left bg-gray-700 hover:bg-gray-600 p-4 rounded-lg transition-colors duration-200 font-tech';
-                button.innerHTML = option; // Use innerHTML for code tags
+                button.innerHTML = option;
                 button.dataset.index = index;
                 button.addEventListener('click', handleOptionClick);
                 quizOptionsContainer.appendChild(button);
@@ -1220,24 +1304,24 @@ s.greet()`)}
             const selectedIndex = parseInt(selectedButton.dataset.index);
             const correctIndex = quizQuestions[currentQuizQuestionIndex].correct;
 
-            // Disable all buttons after one is clicked
             const optionButtons = quizOptionsContainer.querySelectorAll('.option-btn');
             optionButtons.forEach(btn => btn.disabled = true);
 
             if (selectedIndex === correctIndex) {
-                quizScore++;
-                quizScoreEl.textContent = quizScore;
+                quizScore += 10;
                 selectedButton.classList.add('correct');
-                quizFeedbackEl.textContent = "Correct! 🎉";
+                quizFeedbackEl.textContent = "Correct! +10 Points 🎉";
                 quizFeedbackEl.className = 'text-center mt-4 h-6 text-green-400 font-semibold';
             } else {
+                quizScore -= 3;
+                if (quizScore < 0) quizScore = 0; // Score shouldn't be negative
                 selectedButton.classList.add('incorrect');
-                optionButtons[correctIndex].classList.add('correct'); // Show the correct answer
-                quizFeedbackEl.textContent = "Not quite!";
+                optionButtons[correctIndex].classList.add('correct');
+                quizFeedbackEl.textContent = "Incorrect! -3 Points";
                 quizFeedbackEl.className = 'text-center mt-4 h-6 text-red-400 font-semibold';
             }
+            quizScoreEl.textContent = quizScore;
 
-            // Move to next question or end quiz
             setTimeout(() => {
                 currentQuizQuestionIndex++;
                 if (currentQuizQuestionIndex < quizQuestions.length) {
@@ -1250,7 +1334,7 @@ s.greet()`)}
         
         function runQuizTimer() {
             quizStartTime = new Date();
-            clearInterval(quizTimerInterval); // Clear any existing timer
+            clearInterval(quizTimerInterval);
             
             quizTimerInterval = setInterval(() => {
                 const now = new Date();
@@ -1268,26 +1352,23 @@ s.greet()`)}
         function endQuiz() {
             clearInterval(quizTimerInterval);
             const quizEndTime = new Date();
-            const timeTakenInSeconds = Math.floor((quizEndTime - quizStartTime) / 1000);
+            const timeTakenInSeconds = quizStartTime ? Math.floor((quizEndTime - quizStartTime) / 1000) : 0;
 
             showPage('quiz-results-page');
             
-            const total = quizQuestions.length;
-            finalScoreTextEl.textContent = `${quizScore}/${total}`;
+            const total = totalPossibleScore;
+            finalScoreTextEl.textContent = `${quizScore} / ${total}`;
             finalTimeTakenEl.textContent = `Time Taken: ${formatTime(timeTakenInSeconds)}`;
             
             const percentage = total > 0 ? (quizScore / total) * 100 : 0;
             
-            // Speedometer needle rotation: -90deg is 0%, 90deg is 100%. Total range is 180deg.
             const rotation = (percentage / 100) * 180 - 90;
             speedometerNeedle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
 
-            if (percentage >= 80) {
-                finalMessageEl.textContent = "Excellent work! You're a Python pro!";
-            } else if (percentage >= 50) {
-                finalMessageEl.textContent = "Good job! A little more practice and you'll be an expert.";
+            if (quizScore >= passingScore) {
+                finalMessageEl.innerHTML = `<span class="text-green-400 font-bold">You Passed!</span><br>Excellent work, you're a Python pro!`;
             } else {
-                finalMessageEl.textContent = "Keep trying! Revision is key to success.";
+                finalMessageEl.innerHTML = `<span class="text-red-400 font-bold">You Failed.</span><br>Keep trying! Revision is key to success.`;
             }
         }
         
@@ -1307,15 +1388,7 @@ s.greet()`)}
         modeCards.forEach(card => {
             card.addEventListener('click', () => {
                 selectedMode = card.dataset.mode;
-                if (selectedMode === 'flashcards') {
-                    populateTopics(selectedLanguage);
-                    showPage('deck-select-page');
-                } else if (selectedMode === 'cheatsheet') {
-                    cheatsheetContentWrapper.innerHTML = cheatSheets[selectedLanguage] || '<p class="text-center text-gray-500">Cheat sheet for this language is coming soon!</p>';
-                    showPage('cheatsheet-page');
-                } else if (selectedMode === 'quiz') {
-                    showPage('quiz-deck-select-page');
-                }
+                loadAndShowFeaturePage();
             });
         });
 
@@ -1332,10 +1405,12 @@ s.greet()`)}
         quizDeckBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const deckName = e.currentTarget.dataset.deck;
-                startQuiz(deckName);
+                showQuizInstructions(deckName);
             });
         });
 
+        startQuizBtn.addEventListener('click', startQuiz);
+        endQuizBtn.addEventListener('click', endQuiz);
         tryAgainBtn.addEventListener('click', () => showPage('quiz-deck-select-page'));
         
         backBtns.forEach(btn => {
@@ -1360,7 +1435,6 @@ s.greet()`)}
             flashcardInner.classList.toggle('is-flipped');
         });
         flashcardInner.addEventListener('click', (e) => {
-             // Prevent flip when clicking on links or buttons inside the card
             if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
                 return;
             }
@@ -1389,4 +1463,3 @@ s.greet()`)}
     </script>
 </body>
 </html>
-�
