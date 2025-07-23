@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RevvUp | Your Learning Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -219,6 +220,10 @@
                     <h3 class="text-xl font-semibold">Quiz Me!</h3>
                     <p class="text-gray-400">Take a quiz and earn XP.</p>
                 </div>
+                 <div class="mode-card" data-mode="analytics">
+                    <h3 class="text-xl font-semibold">Analytics</h3>
+                    <p class="text-gray-400">Track your learning progress.</p>
+                </div>
             </div>
             <button class="back-btn" data-target="language-select-page">&larr; Change Language</button>
         </div>
@@ -226,7 +231,10 @@
         <!-- ===== Deck Selection Page (Flashcards) ===== -->
         <div id="deck-select-page" class="page justify-center">
             <h2 class="text-3xl font-bold text-center mb-4">Select a Topic</h2>
-            <button id="view-bookmarks-btn" class="mb-6 bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-2 px-6 rounded-lg shadow-lg shadow-amber-500/20 transition-all duration-200 self-center">View Bookmarks</button>
+            <div class="flex justify-center space-x-4 mb-6">
+                <button id="view-bookmarks-btn" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-2 px-6 rounded-lg shadow-lg shadow-amber-500/20 transition-all duration-200">View Bookmarks</button>
+                <button id="create-deck-nav-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg shadow-lg shadow-cyan-500/20 transition-all duration-200">Create New Deck</button>
+            </div>
             <div id="deck-list" class="space-y-6 w-full">
                 <!-- Deck categories and cards will be dynamically inserted here -->
             </div>
@@ -361,6 +369,56 @@
                 Try Another Quiz
             </button>
         </div>
+
+        <!-- ===== Analytics Page ===== -->
+        <div id="analytics-page" class="page justify-center py-8">
+            <div class="w-full">
+                <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">My Progress</h2>
+                <!-- Key Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-800 p-6 rounded-lg text-center">
+                        <h3 class="text-lg text-gray-400">Avg. Quiz Score</h3>
+                        <p id="avg-quiz-score" class="text-4xl font-bold text-cyan-400 mt-2">0%</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg text-center">
+                        <h3 class="text-lg text-gray-400">Flashcards Reviewed</h3>
+                        <p id="cards-reviewed" class="text-4xl font-bold text-cyan-400 mt-2">0</p>
+                    </div>
+                </div>
+                <!-- Learning Curve -->
+                <div class="bg-gray-800 p-6 rounded-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Learning Curve</h3>
+                    <canvas id="learning-curve-chart"></canvas>
+                </div>
+                <!-- Topic Mastery -->
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4">Topic Mastery</h3>
+                    <div id="topic-mastery-container" class="space-y-4">
+                        <!-- Mastery data will be injected here -->
+                    </div>
+                </div>
+                <button class="back-btn" data-target="mode-select-page">&larr; Back to Modes</button>
+            </div>
+        </div>
+
+        <!-- ===== Create Deck Page ===== -->
+        <div id="create-deck-page" class="page justify-center py-8">
+            <div class="w-full">
+                <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">Create a Custom Deck</h2>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <input type="text" id="custom-deck-title" placeholder="Enter Deck Title" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    <div id="custom-cards-container" class="space-y-4">
+                        <!-- Card input fields will be added here -->
+                    </div>
+                    <div class="flex justify-between mt-6">
+                        <button id="add-card-btn" class="bg-gray-700 hover:bg-gray-600 text-cyan-400 font-bold py-2 px-4 rounded-lg">+ Add Card</button>
+                        <button id="save-deck-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg">Save Deck</button>
+                    </div>
+                </div>
+                 <button class="back-btn" data-target="deck-select-page">&larr; Back to Topics</button>
+            </div>
+        </div>
+
 
     </div>
 
@@ -1023,6 +1081,13 @@ s.greet()`)}
         const instrTotalQuestions = document.getElementById('instr-total-questions');
         const instrTotalPoints = document.getElementById('instr-total-points');
         const instrPassingScore = document.getElementById('instr-passing-score');
+        const avgQuizScoreEl = document.getElementById('avg-quiz-score');
+        const cardsReviewedEl = document.getElementById('cards-reviewed');
+        const topicMasteryContainer = document.getElementById('topic-mastery-container');
+        const createDeckNavBtn = document.getElementById('create-deck-nav-btn');
+        const addCardBtn = document.getElementById('add-card-btn');
+        const saveDeckBtn = document.getElementById('save-deck-btn');
+        const customCardsContainer = document.getElementById('custom-cards-container');
 
 
         // --- STATE ---
@@ -1032,6 +1097,7 @@ s.greet()`)}
         let selectedDeck = '';
         let currentCardIndex = 0;
         let isFlipped = false;
+        let learningChart = null;
         
         // Quiz State
         let quizScore = 0;
@@ -1068,6 +1134,22 @@ s.greet()`)}
         function saveBookmarks(bookmarksObj) {
             localStorage.setItem('revvup_bookmarks', JSON.stringify(bookmarksObj));
         }
+        
+        function getQuizHistory() {
+            return JSON.parse(localStorage.getItem('revvup_quiz_history')) || {};
+        }
+
+        function saveQuizHistory(historyObj) {
+             localStorage.setItem('revvup_quiz_history', JSON.stringify(historyObj));
+        }
+        
+        function getCustomDecks() {
+            return JSON.parse(localStorage.getItem('revvup_custom_decks')) || {};
+        }
+
+        function saveCustomDecks(decksObj) {
+            localStorage.setItem('revvup_custom_decks', JSON.stringify(decksObj));
+        }
 
         // --- UI FUNCTIONS ---
 
@@ -1078,47 +1160,58 @@ s.greet()`)}
 
         function populateTopics(lang) {
             const structure = topicStructure[lang];
+            const customDecks = getCustomDecks()[lang] || {};
             deckList.innerHTML = ''; 
             const progress = getProgress();
-            
-            if (!structure) {
-                const topics = Object.keys(allData[lang][selectedMode] || {});
+
+            // Built-in Decks
+            for (const category in structure) {
+                const categoryContainer = document.createElement('div');
+                const categoryTitle = document.createElement('h3');
+                categoryTitle.className = 'text-2xl font-bold text-cyan-400 mb-4';
+                categoryTitle.textContent = category;
+                categoryContainer.appendChild(categoryTitle);
+                
                 const topicGrid = document.createElement('div');
                 topicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
-                topics.forEach(topicName => {
-                     const totalCards = allData[lang][selectedMode][topicName]?.length || 0;
-                     const highestIndexReached = progress[lang]?.[selectedMode]?.[topicName] ?? -1;
-                     topicGrid.appendChild(createTopicCard(topicName, highestIndexReached, totalCards));
+                structure[category].forEach(topicName => {
+                    const totalCards = allData[lang].flashcards[topicName]?.length || 0;
+                    const highestIndexReached = progress[lang]?.flashcards?.[topicName] ?? -1;
+                    if(totalCards > 0) {
+                        topicGrid.appendChild(createTopicCard(topicName, highestIndexReached, totalCards));
+                    }
                 });
-                deckList.appendChild(topicGrid);
-            } else {
-                for (const category in structure) {
-                    const categoryContainer = document.createElement('div');
-                    const categoryTitle = document.createElement('h3');
-                    categoryTitle.className = 'text-2xl font-bold text-cyan-400 mb-4';
-                    categoryTitle.textContent = category;
-                    categoryContainer.appendChild(categoryTitle);
-                    
-                    const topicGrid = document.createElement('div');
-                    topicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
-                    structure[category].forEach(topicName => {
-                        const totalCards = allData[lang][selectedMode][topicName]?.length || 0;
-                        const highestIndexReached = progress[lang]?.[selectedMode]?.[topicName] ?? -1;
-                        if(totalCards > 0) {
-                            topicGrid.appendChild(createTopicCard(topicName, highestIndexReached, totalCards));
-                        }
-                    });
-                    
-                    categoryContainer.appendChild(topicGrid);
-                    deckList.appendChild(categoryContainer);
-                }
+                
+                categoryContainer.appendChild(topicGrid);
+                deckList.appendChild(categoryContainer);
             }
+            
+            // Custom Decks
+            if (Object.keys(customDecks).length > 0) {
+                const categoryContainer = document.createElement('div');
+                const categoryTitle = document.createElement('h3');
+                categoryTitle.className = 'text-2xl font-bold text-amber-400 mt-8 mb-4';
+                categoryTitle.textContent = 'My Decks';
+                categoryContainer.appendChild(categoryTitle);
+
+                const topicGrid = document.createElement('div');
+                topicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+                for (const deckName in customDecks) {
+                    const totalCards = customDecks[deckName].length;
+                    const highestIndexReached = progress[lang]?.flashcards?.[deckName] ?? -1;
+                    topicGrid.appendChild(createTopicCard(deckName, highestIndexReached, totalCards, true));
+                }
+                categoryContainer.appendChild(topicGrid);
+                deckList.appendChild(categoryContainer);
+            }
+
             addTopicCardListeners();
         }
         
-        function createTopicCard(topicName, highestIndexReached, totalCards) {
+        function createTopicCard(topicName, highestIndexReached, totalCards, isCustom = false) {
             const topicCard = document.createElement('div');
-            topicCard.className = "deck-card bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-cyan-400 hover:bg-gray-700 cursor-pointer transition-all duration-200 shadow-lg text-left flex flex-col justify-between";
+            const borderColor = isCustom ? 'hover:border-amber-400' : 'hover:border-cyan-400';
+            topicCard.className = `deck-card bg-gray-800 p-4 rounded-lg border border-gray-700 ${borderColor} cursor-pointer transition-all duration-200 shadow-lg text-left flex flex-col justify-between`;
             topicCard.dataset.deck = topicName;
             
             const completedCount = highestIndexReached + 1;
@@ -1150,7 +1243,15 @@ s.greet()`)}
                 showPage('cheatsheet-page');
             } else if (selectedMode === 'quiz') {
                 showPage('quiz-deck-select-page');
+            } else if (selectedMode === 'analytics') {
+                showAnalyticsPage();
             }
+        }
+
+        function getFullDeckData() {
+            const builtInDecks = allData[selectedLanguage].flashcards || {};
+            const customDecks = getCustomDecks()[selectedLanguage] || {};
+            return { ...builtInDecks, ...customDecks };
         }
 
         function loadFlashcards() {
@@ -1160,15 +1261,19 @@ s.greet()`)}
             }
             setTimeout(() => {
                 const progress = getProgress();
-                currentCardIndex = progress[selectedLanguage]?.[selectedMode]?.[selectedDeck] ?? 0;
-                const totalCards = allData[selectedLanguage][selectedMode][selectedDeck].length;
+                const allDecks = getFullDeckData();
+                const totalCards = allDecks[selectedDeck]?.length || 0;
+                currentCardIndex = progress[selectedLanguage]?.flashcards?.[selectedDeck] ?? 0;
+                
                 if (currentCardIndex >= totalCards) currentCardIndex = 0;
                 displayCard();
             }, 150);
         }
 
         function displayCard() {
-            const cards = allData[selectedLanguage][selectedMode][selectedDeck];
+            const allDecks = getFullDeckData();
+            const cards = allDecks[selectedDeck];
+
             if (!cards || cards.length === 0) {
                  cardFrontText.innerHTML = "Coming Soon!";
                  cardBackText.innerHTML = "This topic deck is under construction.";
@@ -1181,17 +1286,19 @@ s.greet()`)}
             cardFrontText.innerHTML = card.q;
             cardBackText.innerHTML = card.a;
             updateProgress();
-            saveProgress(selectedLanguage, selectedMode, selectedDeck, currentCardIndex);
+            saveProgress(selectedLanguage, 'flashcards', selectedDeck, currentCardIndex);
             updateBookmarkButtonState();
         }
         
         function updateProgress() {
-            const totalCards = allData[selectedLanguage][selectedMode][selectedDeck].length;
+            const allDecks = getFullDeckData();
+            const totalCards = allDecks[selectedDeck].length;
             progressIndicator.textContent = `${currentCardIndex + 1} / ${totalCards}`;
         }
 
         function nextCard() {
-            const cards = allData[selectedLanguage][selectedMode][selectedDeck];
+            const allDecks = getFullDeckData();
+            const cards = allDecks[selectedDeck];
             if (currentCardIndex < cards.length - 1) {
                 currentCardIndex++;
                 if (isFlipped) {
@@ -1214,7 +1321,8 @@ s.greet()`)}
         }
 
         function toggleBookmark() {
-            const cards = allData[selectedLanguage][selectedMode][selectedDeck];
+            const allDecks = getFullDeckData();
+            const cards = allDecks[selectedDeck];
             const card = cards[currentCardIndex];
             const bookmarkKey = `${selectedLanguage}-${selectedDeck}-${card.q}`;
             
@@ -1224,7 +1332,7 @@ s.greet()`)}
             } else {
                 bookmarks[bookmarkKey] = {
                     lang: selectedLanguage,
-                    mode: selectedMode,
+                    mode: 'flashcards',
                     deck: selectedDeck,
                     q: card.q,
                     a: card.a
@@ -1235,7 +1343,8 @@ s.greet()`)}
         }
 
         function updateBookmarkButtonState() {
-            const cards = allData[selectedLanguage][selectedMode][selectedDeck];
+            const allDecks = getFullDeckData();
+            const cards = allDecks[selectedDeck];
             if (!cards || cards.length === 0) return;
             const card = cards[currentCardIndex];
             const bookmarkKey = `${selectedLanguage}-${selectedDeck}-${card.q}`;
@@ -1408,6 +1517,19 @@ s.greet()`)}
             clearInterval(quizTimerInterval);
             const quizEndTime = new Date();
             const timeTakenInSeconds = quizStartTime ? Math.floor((quizEndTime - quizStartTime) / 1000) : 0;
+            
+            // Save quiz result
+            const history = getQuizHistory();
+            if (!history[selectedLanguage]) {
+                history[selectedLanguage] = [];
+            }
+            history[selectedLanguage].push({
+                score: quizScore,
+                total: totalPossibleScore,
+                date: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+            });
+            saveQuizHistory(history);
+
 
             showPage('quiz-results-page');
             
@@ -1426,6 +1548,172 @@ s.greet()`)}
                 finalMessageEl.innerHTML = `<span class="text-red-400 font-bold">You Failed.</span><br>Keep trying! Revision is key to success.`;
             }
         }
+
+        // --- ANALYTICS FUNCTIONS ---
+        function showAnalyticsPage() {
+            // 1. Calculate Avg. Quiz Score
+            const history = getQuizHistory()[selectedLanguage] || [];
+            let totalScore = 0;
+            let totalPossible = 0;
+            history.forEach(quiz => {
+                totalScore += quiz.score;
+                totalPossible += quiz.total;
+            });
+            const avgScore = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+            avgQuizScoreEl.textContent = `${avgScore}%`;
+
+            // 2. Calculate Cards Reviewed
+            const progress = getProgress()[selectedLanguage]?.flashcards || {};
+            let reviewedCount = 0;
+            for (const deck in progress) {
+                reviewedCount += (progress[deck] + 1);
+            }
+            cardsReviewedEl.textContent = reviewedCount;
+
+            // 3. Render Topic Mastery
+            renderTopicMastery();
+            
+            // 4. Render Learning Curve
+            renderLearningCurve();
+
+            showPage('analytics-page');
+        }
+
+        function renderTopicMastery() {
+            topicMasteryContainer.innerHTML = '';
+            const allDecks = getFullDeckData();
+            const progress = getProgress()[selectedLanguage]?.flashcards || {};
+
+            for (const deckName in allDecks) {
+                const totalCards = allDecks[deckName].length;
+                const highestIndexReached = progress[deckName] ?? -1;
+                const completedCount = highestIndexReached + 1;
+                const percentage = totalCards > 0 ? Math.round((completedCount / totalCards) * 100) : 0;
+
+                let masteryLevel = 'Not Started';
+                let masteryColor = 'bg-gray-500';
+                if (percentage > 0 && percentage < 50) {
+                    masteryLevel = 'Beginner';
+                    masteryColor = 'bg-red-500';
+                } else if (percentage >= 50 && percentage < 100) {
+                    masteryLevel = 'Intermediate';
+                    masteryColor = 'bg-yellow-500';
+                } else if (percentage >= 100) {
+                    masteryLevel = 'Mastered';
+                    masteryColor = 'bg-green-500';
+                }
+
+                const masteryEl = document.createElement('div');
+                masteryEl.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <span>${deckName}</span>
+                        <span class="text-sm font-semibold text-gray-300 ${masteryColor.replace('bg-', 'text-')}">${masteryLevel}</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div class="${masteryColor} h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+                topicMasteryContainer.appendChild(masteryEl);
+            }
+        }
+
+        function renderLearningCurve() {
+            const history = getQuizHistory()[selectedLanguage] || [];
+            const ctx = document.getElementById('learning-curve-chart').getContext('2d');
+            
+            const labels = history.map(q => q.date);
+            const data = history.map(q => q.total > 0 ? Math.round((q.score / q.total) * 100) : 0);
+
+            if(learningChart) {
+                learningChart.destroy();
+            }
+
+            learningChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Quiz Score %',
+                        data: data,
+                        backgroundColor: 'rgba(34, 211, 238, 0.2)',
+                        borderColor: 'rgba(34, 211, 238, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: '#9ca3af' }
+                        },
+                        x: {
+                            ticks: { color: '#9ca3af' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // --- CUSTOM DECK FUNCTIONS ---
+        function showCreateDeckPage() {
+            document.getElementById('custom-deck-title').value = '';
+            customCardsContainer.innerHTML = '';
+            addCardField(); // Add the first card field by default
+            showPage('create-deck-page');
+        }
+
+        function addCardField() {
+            const cardField = document.createElement('div');
+            cardField.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+            cardField.innerHTML = `
+                <textarea placeholder="Question" class="custom-card-q w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500" rows="2"></textarea>
+                <textarea placeholder="Answer" class="custom-card-a w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500" rows="2"></textarea>
+            `;
+            customCardsContainer.appendChild(cardField);
+        }
+
+        function saveCustomDeck() {
+            const title = document.getElementById('custom-deck-title').value.trim();
+            if (!title) {
+                alert("Please enter a deck title.");
+                return;
+            }
+
+            const newDeck = [];
+            const cardFields = customCardsContainer.querySelectorAll('.grid');
+            cardFields.forEach(field => {
+                const q = field.querySelector('.custom-card-q').value.trim();
+                const a = field.querySelector('.custom-card-a').value.trim();
+                if (q && a) {
+                    newDeck.push({ q, a });
+                }
+            });
+
+            if (newDeck.length === 0) {
+                alert("Please add at least one valid card.");
+                return;
+            }
+
+            const allCustomDecks = getCustomDecks();
+            if (!allCustomDecks[selectedLanguage]) {
+                allCustomDecks[selectedLanguage] = {};
+            }
+            allCustomDecks[selectedLanguage][title] = newDeck;
+            saveCustomDecks(allCustomDecks);
+
+            alert("Deck saved successfully!");
+            populateTopics(selectedLanguage);
+            showPage('deck-select-page');
+        }
+
         
         // --- EVENT LISTENERS ---
         
@@ -1467,6 +1755,9 @@ s.greet()`)}
         startQuizBtn.addEventListener('click', startQuiz);
         endQuizBtn.addEventListener('click', endQuiz);
         tryAgainBtn.addEventListener('click', () => showPage('quiz-deck-select-page'));
+        createDeckNavBtn.addEventListener('click', showCreateDeckPage);
+        addCardBtn.addEventListener('click', addCardField);
+        saveDeckBtn.addEventListener('click', saveCustomDeck);
         
         backBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
