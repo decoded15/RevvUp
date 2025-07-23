@@ -265,6 +265,7 @@
                 <button id="prev-btn" class="nav-btn">Prev</button>
                 <button id="flip-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-4 px-10 rounded-lg shadow-lg shadow-cyan-500/20 transition-all duration-200 transform hover:scale-110">Flip</button>
                 <button id="next-btn" class="nav-btn">Next</button>
+                <button id="next-deck-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105" style="display: none;">Next Deck &rarr;</button>
             </div>
             <button class="back-btn" data-target="deck-select-page">&larr; Change Topic</button>
         </div>
@@ -977,7 +978,7 @@ print(math.pi)           # 3.14159...`)}
                     ${createCodeWindow(`import random
 print(random.randint(1, 10))`)}
 
-                    <h3>📄 10. File Handling</h3>
+                    <h3>� 10. File Handling</h3>
                     <p>📝 Create/write a file:</p>
                     ${createCodeWindow(`with open("hello.txt", "w") as f:
     f.write("Hello World!")`)}
@@ -1057,6 +1058,7 @@ s.greet()`)}
         const cardBackText = document.getElementById('card-back-text');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
+        const nextDeckBtn = document.getElementById('next-deck-btn');
         const progressIndicator = document.getElementById('progress-indicator');
         const bookmarkBtn = document.getElementById('bookmark-btn');
         const viewBookmarksBtn = document.getElementById('view-bookmarks-btn');
@@ -1156,6 +1158,22 @@ s.greet()`)}
         function showPage(pageId) {
             pages.forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
+        }
+
+        function getOrderedDeckNames() {
+            const structure = topicStructure[selectedLanguage];
+            const customDecks = getCustomDecks()[selectedLanguage] || {};
+            let orderedDecks = [];
+
+            for (const category in structure) {
+                structure[category].forEach(topicName => {
+                    if (allData[selectedLanguage].flashcards[topicName]?.length > 0) {
+                        orderedDecks.push(topicName);
+                    }
+                });
+            }
+            orderedDecks = [...orderedDecks, ...Object.keys(customDecks)];
+            return orderedDecks;
         }
 
         function populateTopics(lang) {
@@ -1288,8 +1306,30 @@ s.greet()`)}
             updateProgress();
             saveProgress(selectedLanguage, 'flashcards', selectedDeck, currentCardIndex);
             updateBookmarkButtonState();
+            updateNavButtons();
         }
         
+        function updateNavButtons() {
+            const allDecks = getFullDeckData();
+            const cards = allDecks[selectedDeck];
+            const isLastCard = currentCardIndex === cards.length - 1;
+
+            if (isLastCard) {
+                const orderedDecks = getOrderedDeckNames();
+                const currentDeckIndex = orderedDecks.indexOf(selectedDeck);
+                if (currentDeckIndex < orderedDecks.length - 1) {
+                    nextBtn.style.display = 'none';
+                    nextDeckBtn.style.display = 'block';
+                } else {
+                    nextBtn.style.display = 'block';
+                    nextDeckBtn.style.display = 'none';
+                }
+            } else {
+                nextBtn.style.display = 'block';
+                nextDeckBtn.style.display = 'none';
+            }
+        }
+
         function updateProgress() {
             const allDecks = getFullDeckData();
             const totalCards = allDecks[selectedDeck].length;
@@ -1317,6 +1357,15 @@ s.greet()`)}
                     flashcardInner.classList.remove('is-flipped');
                 }
                 setTimeout(displayCard, 150);
+            }
+        }
+
+        function goToNextDeck() {
+            const orderedDecks = getOrderedDeckNames();
+            const currentDeckIndex = orderedDecks.indexOf(selectedDeck);
+            if (currentDeckIndex < orderedDecks.length - 1) {
+                selectedDeck = orderedDecks[currentDeckIndex + 1];
+                loadFlashcards();
             }
         }
 
@@ -1774,6 +1823,7 @@ s.greet()`)}
 
         prevBtn.addEventListener('click', prevCard);
         nextBtn.addEventListener('click', nextCard);
+        nextDeckBtn.addEventListener('click', goToNextDeck);
         bookmarkBtn.addEventListener('click', toggleBookmark);
         viewBookmarksBtn.addEventListener('click', displayBookmarksPage);
         document.getElementById('flip-btn').addEventListener('click', () => {
@@ -1786,6 +1836,20 @@ s.greet()`)}
             }
             isFlipped = !isFlipped;
             flashcardInner.classList.toggle('is-flipped');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('flashcard-page').classList.contains('active')) {
+                if (e.key === 'ArrowRight') {
+                    if (nextBtn.style.display !== 'none') {
+                        nextCard();
+                    } else if (nextDeckBtn.style.display !== 'none') {
+                        goToNextDeck();
+                    }
+                } else if (e.key === 'ArrowLeft') {
+                    prevCard();
+                }
+            }
         });
 
         // --- Initial Style Setup for Reused Components ---
