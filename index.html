@@ -88,6 +88,63 @@
          .cheatsheet-content th {
             background-color: #374151; /* gray-700 */
          }
+
+        /* Quiz Styles */
+        .option-btn {
+            transition: all 0.2s ease-in-out;
+            border: 2px solid transparent;
+        }
+        .option-btn.correct {
+            background-color: #10b981 !important; /* green-500 */
+            border-color: #059669 !important; /* green-600 */
+            transform: scale(1.05);
+            color: #fff !important;
+        }
+        .option-btn.incorrect {
+             background-color: #ef4444 !important; /* red-500 */
+             border-color: #dc2626 !important; /* red-600 */
+             color: #fff !important;
+        }
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        
+        /* Speedometer */
+        .speedometer-container {
+            width: 280px;
+            height: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+        .speedometer-bg {
+            width: 280px;
+            height: 140px;
+            border-radius: 140px 140px 0 0;
+            background: conic-gradient(from -90deg, #ef4444, #f59e0b, #10b981);
+        }
+        .speedometer-mask {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 240px;
+            height: 120px;
+            background: #111827;
+            border-radius: 120px 120px 0 0;
+        }
+        .speedometer-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            height: 120px;
+            background: #67e8f9;
+            transform-origin: bottom center;
+            transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+            transform: translateX(-50%) rotate(-90deg);
+            border-radius: 2px;
+            box-shadow: 0 0 10px #67e8f9;
+        }
     </style>
 </head>
 <body class="text-gray-200">
@@ -105,7 +162,7 @@
                 Start Revising
             </button>
             <footer class="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-gray-600">
-                <p class="font-tech text-sm">Created with <span class="text-red-500">&hearts;</span> by Dibyansh</p>
+                <p class="font-tech text-base">Created with <span class="text-red-500">&hearts;</span> by Dibyansh</p>
             </footer>
         </div>
 
@@ -154,7 +211,7 @@
             <button class="back-btn" data-target="language-select-page">&larr; Change Language</button>
         </div>
 
-        <!-- ===== Deck Selection Page ===== -->
+        <!-- ===== Deck Selection Page (Flashcards) ===== -->
         <div id="deck-select-page" class="page justify-center">
             <h2 class="text-3xl font-bold text-center mb-4">Select a Topic</h2>
             <button id="view-bookmarks-btn" class="mb-6 bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-2 px-6 rounded-lg shadow-lg shadow-amber-500/20 transition-all duration-200 self-center">View Bookmarks</button>
@@ -209,15 +266,66 @@
             <button class="back-btn" data-target="mode-select-page">&larr; Change Mode</button>
         </div>
         
-        <!-- ===== Quiz Page (Placeholder) ===== -->
-        <div id="quiz-page" class="page justify-center">
-            <h2 class="text-3xl font-bold text-center mb-8">Quiz</h2>
-            <div class="bg-gray-800 p-6 rounded-lg">
-                <p class="font-tech text-xl mb-4">// Quiz questions for this topic will appear here...</p>
-                <p class="mt-6 text-right text-cyan-400 font-bold">XP: <span id="xp-counter">0</span></p>
+        <!-- ===== Quiz Deck Selection Page ===== -->
+        <div id="quiz-deck-select-page" class="page justify-center">
+            <h2 class="text-3xl font-bold text-center mb-8">Select Quiz Difficulty</h2>
+            <div class="space-y-4 w-full max-w-md">
+                <div class="mode-card quiz-deck-btn" data-deck="beginner">
+                    <h3 class="text-xl font-semibold">🟢 Beginner</h3>
+                    <p class="text-gray-400">Test your knowledge on the basics.</p>
+                </div>
+                <div class="mode-card quiz-deck-btn" data-deck="intermediate">
+                    <h3 class="text-xl font-semibold">🟡 Intermediate</h3>
+                    <p class="text-gray-400">Challenge yourself with tougher concepts.</p>
+                </div>
+                <div class="mode-card quiz-deck-btn" data-deck="oop">
+                    <h3 class="text-xl font-semibold">🔵 Object-Oriented Programming</h3>
+                    <p class="text-gray-400">Focus on classes, objects, and more.</p>
+                </div>
+                 <div class="mode-card quiz-deck-btn" data-deck="marathon">
+                    <h3 class="text-xl font-semibold">🏆 Marathon</h3>
+                    <p class="text-gray-400">A mix of all topics!</p>
+                </div>
             </div>
-             <button class="back-btn" data-target="mode-select-page">&larr; Change Mode</button>
+            <button class="back-btn" data-target="mode-select-page">&larr; Change Mode</button>
         </div>
+
+        <!-- ===== Live Quiz Page ===== -->
+        <div id="live-quiz-page" class="page justify-center">
+            <div class="w-full max-w-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-lg font-bold">Score: <span id="quiz-score">0</span></div>
+                    <div id="quiz-timer" class="font-bold text-2xl text-cyan-400 font-tech">00:00</div>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <p class="text-gray-400 text-sm">Question <span id="quiz-question-number">1</span> of <span id="quiz-total-questions">25</span></p>
+                    <div id="quiz-question-text" class="text-xl font-semibold my-4"></div>
+                    <div id="quiz-options-container" class="space-y-3">
+                        <!-- Options will be inserted here -->
+                    </div>
+                </div>
+                <div id="quiz-feedback" class="text-center mt-4 h-6"></div>
+            </div>
+        </div>
+        
+        <!-- ===== Quiz Results Page ===== -->
+        <div id="quiz-results-page" class="page justify-center items-center text-center">
+            <h2 class="text-4xl font-bold mb-4">Quiz Complete!</h2>
+            <div class="speedometer-container my-8">
+                <div class="speedometer-bg"></div>
+                <div class="speedometer-mask"></div>
+                <div id="speedometer-needle" class="speedometer-needle"></div>
+                <div class="absolute inset-0 flex flex-col justify-end items-center pb-4">
+                     <span id="final-score-text" class="text-4xl font-bold text-cyan-400">0/0</span>
+                </div>
+            </div>
+            <p id="final-time-taken" class="text-lg mt-2 font-tech"></p>
+            <p id="final-message" class="text-xl text-gray-300 mt-4"></p>
+            <button id="try-again-btn" class="mt-8 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg">
+                Try Another Quiz
+            </button>
+        </div>
+
     </div>
 
     <!-- Badge Modal -->
@@ -562,6 +670,38 @@
                         { q: "How to simulate a coin toss using random?", a: createCodeWindow(`random.choice(['Heads', 'Tails'])`) }
                     ],
                     "🏛️ Classes & Objects": [], "🛠️ Constructors": [], "👨‍👩‍👧‍👦 Inheritance": [], "🎭 Polymorphism": [], "💊 Encapsulation": []
+                },
+                quiz: {
+                    beginner: [
+                        { q: "Which of these is a valid variable name?", options: ["1value", "value_1", "value-1"], correct: 1 },
+                        { q: "What will `10 // 3` return?", options: ["3", "3.33", "1"], correct: 0 },
+                        { q: "What is the result of `type(\"10\")`?", options: ["&lt;class 'int'&gt;", "&lt;class 'str'&gt;", "&lt;str&gt;"], correct: 1 },
+                        { q: "Which keyword defines a function in Python?", options: ["func", "def", "function"], correct: 1 },
+                        { q: "Which operator is used to calculate power (exponentiation)?", options: ["^", "**", "^^"], correct: 1 },
+                        { q: "Which of these is used to create a comment?", options: ["//", "#", "--"], correct: 1 },
+                        { q: "What is the output of `print(\"Hi\" * 3)`?", options: ["HiHiHi", "Hi3", "Error"], correct: 0 },
+                        { q: "What does `len([1, 2, 3, 4])` return?", options: ["3", "4", "5"], correct: 1 },
+                        { q: "Which loop runs until a condition becomes false?", options: ["for", "while", "loop"], correct: 1 },
+                        { q: "What is the correct way to define a tuple?", options: ["[1, 2, 3]", "{1, 2, 3}", "(1, 2, 3)"], correct: 2 },
+                        { q: "Which method removes the last item from a list?", options: ["pop()", "delete()", "remove()"], correct: 0 },
+                        { q: "How do you check if a key \"name\" exists in a dictionary `d`?", options: ["name in d", "\"name\" in d", "d.has(\"name\")"], correct: 1 },
+                        { q: "Which of the following is immutable?", options: ["List", "Dictionary", "Tuple"], correct: 2 },
+                        { q: "Which data structure does not allow duplicate values?", options: ["List", "Set", "Dictionary"], correct: 1 },
+                        { q: "What is the output of `bool(0)`?", options: ["True", "False", "None"], correct: 1 },
+                        { q: "How would you convert a float to int?", options: ["int(float_num)", "float(int)", "str(int)"], correct: 0 },
+                        { q: "What is the output of this code?<br><div class=\"code-window\"><div class=\"code-window-header\"><span class=\"code-window-dot red\"></span><span class=\"code-window-dot yellow\"></span><span class=\"code-window-dot green\"></span></div><pre><code>x = 5\nif x == 5:\n    print(\"Yes\")</code></pre></div>", options: ["Yes", "True", "5"], correct: 0 },
+                        { q: "What is `range(3)` equal to when converted to a list?", options: ["[0, 1, 2]", "[1, 2, 3]", "[1, 2]"], correct: 0 },
+                        { q: "Which function returns absolute value?", options: ["absolute()", "abs()", "fabs()"], correct: 1 },
+                        { q: "How do you get user input?", options: ["scan()", "input()", "get()"], correct: 1 },
+                        { q: "Which of the following will create a dictionary?", options: ["dict = [1, 2, 3]", "dict = {\"a\": 1, \"b\": 2}", "dict = (1, 2, 3)"], correct: 1 },
+                        { q: "What does `\"python\".upper()` return?", options: ["\"PYTHON\"", "\"python\"", "\"Python\""], correct: 0 },
+                        { q: "What will `print(3 == 3.0)` output?", options: ["False", "True", "Error"], correct: 1 },
+                        { q: "Which symbol is used for modulus (remainder)?", options: ["%", "//", "&"], correct: 0 },
+                        { q: "Which of these is a valid function call?", options: ["print[\"Hello\"]", "print(\"Hello\")", "print = \"Hello\""], correct: 1 }
+                    ],
+                    intermediate: [],
+                    oop: [],
+                    marathon: []
                 }
             },
             javascript: {
@@ -585,7 +725,7 @@ is_coder = True       # bool (True/False)`)}
                     <p>Want to know the type? Use <code>type()</code> 👇</p>
                     ${createCodeWindow(`print(type(name))  # <class 'str'>`)}
 
-                    <h3>🔁 2. Loops</h3>
+                    <h3>� 2. Loops</h3>
                     <p>🌀 <strong>for loop</strong> – when you know how many times</p>
                     ${createCodeWindow(`for i in range(1, 6):
     print("Hi", i)`)}
@@ -752,6 +892,19 @@ s.greet()`)}
         const bookmarksList = document.getElementById('bookmarks-list');
         const bookmarksLangSpan = document.getElementById('bookmarks-lang-span');
         const cheatsheetContentWrapper = document.getElementById('cheatsheet-content-wrapper');
+        const quizDeckBtns = document.querySelectorAll('.quiz-deck-btn');
+        const quizScoreEl = document.getElementById('quiz-score');
+        const quizTimerEl = document.getElementById('quiz-timer');
+        const quizQuestionNumEl = document.getElementById('quiz-question-number');
+        const quizTotalQuestionsEl = document.getElementById('quiz-total-questions');
+        const quizQuestionTextEl = document.getElementById('quiz-question-text');
+        const quizOptionsContainer = document.getElementById('quiz-options-container');
+        const quizFeedbackEl = document.getElementById('quiz-feedback');
+        const finalScoreTextEl = document.getElementById('final-score-text');
+        const speedometerNeedle = document.getElementById('speedometer-needle');
+        const finalMessageEl = document.getElementById('final-message');
+        const finalTimeTakenEl = document.getElementById('final-time-taken');
+        const tryAgainBtn = document.getElementById('try-again-btn');
 
 
         // --- STATE ---
@@ -761,7 +914,14 @@ s.greet()`)}
         let selectedDeck = '';
         let currentCardIndex = 0;
         let isFlipped = false;
-        let userXP = 0;
+        
+        // Quiz State
+        let quizScore = 0;
+        let quizTimerInterval;
+        let quizQuestions = [];
+        let currentQuizQuestionIndex = 0;
+        let quizStartTime;
+
 
         // --- DATA PERSISTENCE FUNCTIONS ---
         function getProgress() {
@@ -822,7 +982,9 @@ s.greet()`)}
                     structure[category].forEach(topicName => {
                         const totalCards = allData[lang][selectedMode][topicName]?.length || 0;
                         const highestIndexReached = progress[lang]?.[selectedMode]?.[topicName] ?? -1;
-                        topicGrid.appendChild(createTopicCard(topicName, highestIndexReached, totalCards));
+                        if(totalCards > 0) {
+                            topicGrid.appendChild(createTopicCard(topicName, highestIndexReached, totalCards));
+                        }
                     });
                     
                     categoryContainer.appendChild(topicGrid);
@@ -859,14 +1021,13 @@ s.greet()`)}
 
         function loadAndShowFeaturePage() {
             if (selectedMode === 'flashcards') {
-                loadFlashcards();
-                showPage('flashcard-page');
+                populateTopics(selectedLanguage);
+                showPage('deck-select-page');
             } else if (selectedMode === 'cheatsheet') {
                 cheatsheetContentWrapper.innerHTML = cheatSheets[selectedLanguage] || '<p class="text-center text-gray-500">Cheat sheet for this language is coming soon!</p>';
                 showPage('cheatsheet-page');
             } else if (selectedMode === 'quiz') {
-                document.getElementById('xp-counter').textContent = userXP;
-                showPage('quiz-page');
+                showPage('quiz-deck-select-page');
             }
         }
 
@@ -876,7 +1037,10 @@ s.greet()`)}
                 flashcardInner.classList.remove('is-flipped');
             }
             setTimeout(() => {
-                currentCardIndex = 0;
+                const progress = getProgress();
+                currentCardIndex = progress[selectedLanguage]?.[selectedMode]?.[selectedDeck] ?? 0;
+                const totalCards = allData[selectedLanguage][selectedMode][selectedDeck].length;
+                if (currentCardIndex >= totalCards) currentCardIndex = 0;
                 displayCard();
             }, 150);
         }
@@ -1009,6 +1173,123 @@ s.greet()`)}
             
             showPage('bookmarks-page');
         }
+
+        // --- QUIZ FUNCTIONS ---
+        function startQuiz(deckName) {
+            const allQuizQuestions = allData[selectedLanguage].quiz[deckName] || [];
+            if (allQuizQuestions.length === 0) {
+                alert("This quiz is not available yet.");
+                return;
+            }
+
+            // Shuffle questions
+            quizQuestions = [...allQuizQuestions].sort(() => Math.random() - 0.5);
+            
+            currentQuizQuestionIndex = 0;
+            quizScore = 0;
+            
+            quizScoreEl.textContent = quizScore;
+            quizTotalQuestionsEl.textContent = quizQuestions.length;
+
+            displayQuizQuestion();
+            runQuizTimer();
+            showPage('live-quiz-page');
+        }
+
+        function displayQuizQuestion() {
+            quizFeedbackEl.textContent = '';
+            const question = quizQuestions[currentQuizQuestionIndex];
+            
+            quizQuestionNumEl.textContent = currentQuizQuestionIndex + 1;
+            // Use innerHTML to correctly render code tags if any
+            quizQuestionTextEl.innerHTML = question.q;
+            
+            quizOptionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn w-full text-left bg-gray-700 hover:bg-gray-600 p-4 rounded-lg transition-colors duration-200 font-tech';
+                button.innerHTML = option; // Use innerHTML for code tags
+                button.dataset.index = index;
+                button.addEventListener('click', handleOptionClick);
+                quizOptionsContainer.appendChild(button);
+            });
+        }
+
+        function handleOptionClick(event) {
+            const selectedButton = event.currentTarget;
+            const selectedIndex = parseInt(selectedButton.dataset.index);
+            const correctIndex = quizQuestions[currentQuizQuestionIndex].correct;
+
+            // Disable all buttons after one is clicked
+            const optionButtons = quizOptionsContainer.querySelectorAll('.option-btn');
+            optionButtons.forEach(btn => btn.disabled = true);
+
+            if (selectedIndex === correctIndex) {
+                quizScore++;
+                quizScoreEl.textContent = quizScore;
+                selectedButton.classList.add('correct');
+                quizFeedbackEl.textContent = "Correct! 🎉";
+                quizFeedbackEl.className = 'text-center mt-4 h-6 text-green-400 font-semibold';
+            } else {
+                selectedButton.classList.add('incorrect');
+                optionButtons[correctIndex].classList.add('correct'); // Show the correct answer
+                quizFeedbackEl.textContent = "Not quite!";
+                quizFeedbackEl.className = 'text-center mt-4 h-6 text-red-400 font-semibold';
+            }
+
+            // Move to next question or end quiz
+            setTimeout(() => {
+                currentQuizQuestionIndex++;
+                if (currentQuizQuestionIndex < quizQuestions.length) {
+                    displayQuizQuestion();
+                } else {
+                    endQuiz();
+                }
+            }, 1500);
+        }
+        
+        function runQuizTimer() {
+            quizStartTime = new Date();
+            clearInterval(quizTimerInterval); // Clear any existing timer
+            
+            quizTimerInterval = setInterval(() => {
+                const now = new Date();
+                const elapsedSeconds = Math.floor((now - quizStartTime) / 1000);
+                quizTimerEl.textContent = formatTime(elapsedSeconds);
+            }, 1000);
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function endQuiz() {
+            clearInterval(quizTimerInterval);
+            const quizEndTime = new Date();
+            const timeTakenInSeconds = Math.floor((quizEndTime - quizStartTime) / 1000);
+
+            showPage('quiz-results-page');
+            
+            const total = quizQuestions.length;
+            finalScoreTextEl.textContent = `${quizScore}/${total}`;
+            finalTimeTakenEl.textContent = `Time Taken: ${formatTime(timeTakenInSeconds)}`;
+            
+            const percentage = total > 0 ? (quizScore / total) * 100 : 0;
+            
+            // Speedometer needle rotation: -90deg is 0%, 90deg is 100%. Total range is 180deg.
+            const rotation = (percentage / 100) * 180 - 90;
+            speedometerNeedle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+
+            if (percentage >= 80) {
+                finalMessageEl.textContent = "Excellent work! You're a Python pro!";
+            } else if (percentage >= 50) {
+                finalMessageEl.textContent = "Good job! A little more practice and you'll be an expert.";
+            } else {
+                finalMessageEl.textContent = "Keep trying! Revision is key to success.";
+            }
+        }
         
         // --- EVENT LISTENERS ---
         
@@ -1029,8 +1310,11 @@ s.greet()`)}
                 if (selectedMode === 'flashcards') {
                     populateTopics(selectedLanguage);
                     showPage('deck-select-page');
-                } else {
-                   loadAndShowFeaturePage();
+                } else if (selectedMode === 'cheatsheet') {
+                    cheatsheetContentWrapper.innerHTML = cheatSheets[selectedLanguage] || '<p class="text-center text-gray-500">Cheat sheet for this language is coming soon!</p>';
+                    showPage('cheatsheet-page');
+                } else if (selectedMode === 'quiz') {
+                    showPage('quiz-deck-select-page');
                 }
             });
         });
@@ -1039,16 +1323,29 @@ s.greet()`)}
             document.querySelectorAll('.deck-card').forEach(card => {
                 card.addEventListener('click', () => {
                     selectedDeck = card.dataset.deck;
-                    loadAndShowFeaturePage();
+                    loadFlashcards();
+                    showPage('flashcard-page');
                 });
             });
         }
+        
+        quizDeckBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const deckName = e.currentTarget.dataset.deck;
+                startQuiz(deckName);
+            });
+        });
+
+        tryAgainBtn.addEventListener('click', () => showPage('quiz-deck-select-page'));
         
         backBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const targetPageId = e.target.dataset.target;
                 if (targetPageId === 'deck-select-page') {
                     populateTopics(selectedLanguage);
+                }
+                 if (targetPageId === 'mode-select-page') {
+                    clearInterval(quizTimerInterval);
                 }
                 showPage(targetPageId)
             });
@@ -1058,8 +1355,18 @@ s.greet()`)}
         nextBtn.addEventListener('click', nextCard);
         bookmarkBtn.addEventListener('click', toggleBookmark);
         viewBookmarksBtn.addEventListener('click', displayBookmarksPage);
-        document.getElementById('flip-btn').addEventListener('click', () => flashcardInner.classList.toggle('is-flipped'));
-        flashcardInner.addEventListener('click', () => flashcardInner.classList.toggle('is-flipped'));
+        document.getElementById('flip-btn').addEventListener('click', () => {
+            isFlipped = !isFlipped;
+            flashcardInner.classList.toggle('is-flipped');
+        });
+        flashcardInner.addEventListener('click', (e) => {
+             // Prevent flip when clicking on links or buttons inside the card
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                return;
+            }
+            isFlipped = !isFlipped;
+            flashcardInner.classList.toggle('is-flipped');
+        });
 
         // --- Initial Style Setup for Reused Components ---
         function applyStyles() {
@@ -1069,9 +1376,6 @@ s.greet()`)}
             const cardBaseStyles = "bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-cyan-400 hover:bg-gray-700 cursor-pointer transition-all duration-200 shadow-lg";
             document.querySelectorAll('.language-card').forEach(card => card.className = `${cardBaseStyles} flex flex-col items-center justify-center text-cyan-400`);
             document.querySelectorAll('.mode-card').forEach(card => card.className = `${cardBaseStyles} text-left`);
-            
-            const quizOptionStyles = "w-full text-left bg-gray-700 hover:bg-gray-600 p-3 rounded-lg transition-colors duration-200";
-            document.querySelectorAll('.quiz-option').forEach(btn => btn.className = quizOptionStyles);
             
             const backBtnStyles = "bg-gray-800 text-gray-400 hover:text-cyan-400 border border-gray-700 hover:border-cyan-500 font-semibold py-2 px-5 rounded-lg transition-all duration-200 self-center mt-12";
             const backBtnStyleArray = backBtnStyles.split(' ');
@@ -1085,3 +1389,4 @@ s.greet()`)}
     </script>
 </body>
 </html>
+�
