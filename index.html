@@ -54,7 +54,24 @@
             -webkit-backdrop-filter: blur(5px);
         }
 
-        /* Cheat Sheet Specific Styles */
+        /* General Code Styling */
+        .cheatsheet-content code {
+            color: #fcd34d; /* amber-300 */
+            font-family: 'Source Code Pro', monospace;
+            font-weight: 600;
+            background-color: #374151;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+        
+        /* Override for code inside macOS-style windows */
+        .code-window code {
+            color: inherit;
+            background-color: transparent;
+            padding: 0;
+            font-weight: normal; /* Use the font-weight from the <pre> tag */
+        }
+
         .cheatsheet-content h3 {
             font-size: 1.5rem;
             font-weight: 700;
@@ -69,21 +86,6 @@
         .cheatsheet-content .code-window {
              margin-top: 0.5rem;
              margin-bottom: 1rem;
-        }
-        .cheatsheet-content code {
-            color: #fcd34d; /* amber-300 */
-            font-family: 'Source Code Pro', monospace;
-            font-weight: 600;
-            background-color: #374151;
-            padding: 0.1rem 0.4rem;
-            border-radius: 0.25rem;
-        }
-        /* Remove special styling for code inside quiz questions */
-        #quiz-question-text code {
-            color: inherit;
-            background-color: transparent;
-            padding: 0;
-            font-weight: 600;
         }
         .cheatsheet-content table {
             width: 100%;
@@ -306,6 +308,7 @@
                 <h2 class="text-3xl font-bold text-cyan-400 mb-4">Quiz Instructions</h2>
                 <ul class="text-left space-y-3 text-gray-300">
                     <li>✔️ This quiz has <strong id="instr-total-questions" class="text-white"></strong> questions.</li>
+                    <li>⏳ You have <strong class="text-white">20 minutes</strong> to complete the quiz.</li>
                     <li>➕ You get <strong class="text-green-400">+10 points</strong> for each correct answer.</li>
                     <li>➖ You lose <strong class="text-red-400">-3 points</strong> for each incorrect answer.</li>
                     <li>🎯 Total possible score: <strong id="instr-total-points" class="text-white"></strong> points.</li>
@@ -326,7 +329,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <div id="quiz-timer" class="font-bold text-2xl text-cyan-400 font-tech">00:00</div>
+                        <div id="quiz-timer" class="font-bold text-2xl text-cyan-400 font-tech">20:00</div>
                     </div>
                     <button id="end-quiz-btn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">End Quiz</button>
                 </div>
@@ -763,8 +766,55 @@
                         { q: "What does this print?" + createCodeWindow('import math\nprint(math.pow(2, 3))'), options: ["8.0", "8", "6"], correct: 0 },
                         { q: "Output?" + createCodeWindow('print(type((1)))'), options: ["&lt;class 'tuple'&gt;", "&lt;class 'int'&gt;", "&lt;class 'list'&gt;"], correct: 1 }
                     ],
-                    oop: [],
-                    marathon: []
+                    oop: [
+                        { q: "What does `self` refer to in a class method?" + createCodeWindow('class Dog:\n    def bark(self):\n        print("Woof!")'), options: ["The class itself", "The current instance", "A local variable"], correct: 1 },
+                        { q: "What will the following code print?" + createCodeWindow('class A:\n    def greet(self):\n        print("Hello from A")\n\nclass B(A):\n    pass\n\nobj = B()\nobj.greet()'), options: ["Hello from B", "Error", "Hello from A"], correct: 2 },
+                        { q: "Which method is used to initialize an object in Python?", options: ["__start__()", "__create__()", "__init__()"], correct: 2 },
+                        { q: "What will this output?" + createCodeWindow('class Person:\n    def __init__(self, name):\n        self.name = name\n\np = Person("Alice")\nprint(p.name)'), options: ["Person", "name", "Alice"], correct: 2 },
+                        { q: "Which of the following indicates inheritance in Python?", options: ["class A inherits B:", "class A(B):", "class A -> B:"], correct: 1 },
+                        { q: "Which of the following is NOT a pillar of OOP?", options: ["Inheritance", "Encapsulation", "Compilation"], correct: 2 },
+                        { q: "How can you prevent access to a class variable directly?" + createCodeWindow('class Secret:\n    def __init__(self):\n        self.__code = "1234"'), options: ["Use a single underscore", "Use double underscore", "Make it capitalized"], correct: 1 },
+                        { q: "Which method converts an object to a string?", options: ["__str__()", "__repr__()", "__toString__()"], correct: 0 },
+                        { q: "What will this print?" + createCodeWindow('class A:\n    def show(self):\n        print("A")\n\nclass B(A):\n    def show(self):\n        print("B")\n\nB().show()'), options: ["A", "B", "Error"], correct: 1 },
+                        { q: "What is polymorphism in Python?", options: ["Using many classes", "Functions/classes with multiple forms", "Having many objects"], correct: 1 },
+                        { q: "Which method is used to destroy objects?", options: ["__del__()", "__delete__()", "__destroy__()"], correct: 0 },
+                        { q: "What does this print?" + createCodeWindow('class Test:\n    def __init__(self):\n        print("Created!")\n\nt1 = Test()\nt2 = Test()'), options: ["Created!", "Created! Created!", "Nothing"], correct: 1 },
+                        { q: "What does encapsulation mean?", options: ["Inheriting multiple classes", "Hiding internal state", "Making a class global"], correct: 1 },
+                        { q: "Which keyword is used to inherit a class?", options: ["inherits", "derive", "class B(A)"], correct: 2 },
+                        { q: "What’s wrong here?" + createCodeWindow('class MyClass:\n    def __init__():\n        self.name = "Oops"'), options: ["Missing self in parameter", "self cannot be used", "__init__ shouldn't be used"], correct: 0 },
+                        { q: "Output of the following?" + createCodeWindow('class A:\n    pass\n\na1 = A()\nprint(isinstance(a1, A))'), options: ["True", "False", "Error"], correct: 0 },
+                        { q: "What will this return?" + createCodeWindow('class Base:\n    def talk(self):\n        return "Talking"\n\nclass Child(Base):\n    pass\n\nprint(Child().talk())'), options: ["Nothing", "Error", "Talking"], correct: 2 },
+                        { q: "Choose the correct one for method overloading in Python.", options: ["Supported natively", "Can use default arguments", "Must define many functions"], correct: 1 },
+                        { q: "How to define a class attribute?" + createCodeWindow('class Sample:\n    counter = 0'), options: ["Inside __init__()", "Inside method only", "Outside methods in class"], correct: 2 },
+                        { q: "Static methods in Python use:", options: ["@staticmethod", "@class", "@selfmethod"], correct: 0 },
+                        { q: "What’s the output?" + createCodeWindow('class A:\n    def __str__(self):\n        return "A"\n\nprint(A())'), options: ["Memory address", "A", "Error"], correct: 1 },
+                        { q: "How to define a class method?", options: ["@staticmethod", "@classmethod", "@method"], correct: 1 },
+                        { q: "What is multiple inheritance?", options: ["Class with many objects", "Class inheriting from many classes", "Class having many methods"], correct: 1 },
+                        { q: "What will this code print?" + createCodeWindow('class A:\n    def f(self):\n        print("A")\n\nclass B:\n    def f(self):\n        print("B")\n\nclass C(A, B):\n    pass\n\nC().f()'), options: ["A", "B", "Error"], correct: 0 },
+                        { q: "Which will define an object?" + createCodeWindow('class A:\n    pass\n\nx = A()'), options: ["A()", "class A:", "pass"], correct: 0 }
+                    ],
+                    marathon: [
+                        { q: "What will be the output of this code?" + createCodeWindow('x = "10"\ny = int(x)\nprint(y + 5)'), options: ["105", "15", "Error"], correct: 1 },
+                        { q: "What does this return? <code>type([1, 2, 3])</code>", options: ["&lt;class 'list'&gt;", "&lt;type 'array'&gt;", "&lt;class 'tuple'&gt;"], correct: 0 },
+                        { q: "What is the output of this loop?" + createCodeWindow('for i in range(2, 7, 2):\n    print(i, end=" ")'), options: ["2 4 6", "2 3 4 5 6", "2 4 6 8"], correct: 0 },
+                        { q: "Which keyword is used for defining a function in Python?", options: ["def", "function", "func"], correct: 0 },
+                        { q: "What will be the result?" + createCodeWindow('name = "Python"\nprint(name[::-1])'), options: ["Python", "nohtyP", "Error"], correct: 1 },
+                        { q: "What’s the output?" + createCodeWindow('mylist = [1, 2, 3]\nmylist.append([4, 5])\nprint(mylist)'), options: ["[1, 2, 3, 4, 5]", "[1, 2, 3, [4, 5]]", "Error"], correct: 1 },
+                        { q: "What does this return? <code>bool(\"\") == False</code>", options: ["True", "False", "Error"], correct: 0 },
+                        { q: "What happens here? <code>print(10 / 3)</code>", options: ["3", "3.333...", "3.0"], correct: 1 },
+                        { q: "What does <code>strip()</code> do?", options: ["Removes specific characters", "Removes whitespace from ends", "Changes case"], correct: 1 },
+                        { q: "Output of this comprehension? <code>[i*i for i in range(3)]</code>", options: ["[1, 2, 3]", "[0, 1, 4]", "[0, 1, 2]"], correct: 1 },
+                        { q: "What’s printed here?" + createCodeWindow('print(list(map(lambda x: x + 2, [1, 2, 3])))'), options: ["[3, 4, 5]", "[1, 2, 3]", "[2, 3, 4]"], correct: 0 },
+                        { q: "Output of this?" + createCodeWindow('try:\n    print(1 / 0)\nexcept ZeroDivisionError:\n    print("Can\'t divide by zero!")'), options: ["0", "Error", "Can't divide by zero!"], correct: 2 },
+                        { q: "Which module gives access to random choices?", options: ["math", "random", "numpy"], correct: 1 },
+                        { q: "What is the output?" + createCodeWindow('x = 5\ndef change():\n    global x\n    x = 10\nchange()\nprint(x)'), options: ["5", "10", "Error"], correct: 1 },
+                        { q: "What does this code do?" + createCodeWindow('import math\nprint(math.floor(2.9))'), options: ["3", "2", "Error"], correct: 1 },
+                        { q: "Which of these defines a class?", options: ["class MyClass():", "MyClass = class()", "def MyClass():"], correct: 0 },
+                        { q: "What does this return?" + createCodeWindow('class Dog:\n    def __init__(self):\n        self.sound = "bark"\n        \nd = Dog()\nprint(d.sound)'), options: ["bark", "Error", "None"], correct: 0 },
+                        { q: "Output of this?" + createCodeWindow('class A:\n    def hello(self):\n        return "Hi"\n        \na = A()\nprint(a.hello())'), options: ["Hi", "hello", "Error"], correct: 0 },
+                        { q: "Which method is called automatically when object is created?", options: ["__new__()", "__init__()", "__str__()"], correct: 1 },
+                        { q: "What is Inheritance used for?", options: ["Encapsulation", "Code reusability", "Debugging"], correct: 1 }
+                    ]
                 }
             },
             javascript: {
@@ -992,6 +1042,7 @@ s.greet()`)}
         let selectedQuizDeckName = '';
         let totalPossibleScore = 0;
         let passingScore = 0;
+        const QUIZ_TIME_LIMIT = 20 * 60; // 20 minutes in seconds
 
 
         // --- DATA PERSISTENCE FUNCTIONS ---
@@ -1267,7 +1318,6 @@ s.greet()`)}
         function startQuiz() {
             const allQuizQuestions = allData[selectedLanguage].quiz[selectedQuizDeckName] || [];
             
-            // Shuffle questions
             quizQuestions = [...allQuizQuestions].sort(() => Math.random() - 0.5);
             
             currentQuizQuestionIndex = 0;
@@ -1277,7 +1327,7 @@ s.greet()`)}
             quizTotalQuestionsEl.textContent = quizQuestions.length;
 
             displayQuizQuestion();
-            runQuizTimer();
+            startQuizTimer();
             showPage('live-quiz-page');
         }
 
@@ -1314,7 +1364,7 @@ s.greet()`)}
                 quizFeedbackEl.className = 'text-center mt-4 h-6 text-green-400 font-semibold';
             } else {
                 quizScore -= 3;
-                if (quizScore < 0) quizScore = 0; // Score shouldn't be negative
+                if (quizScore < 0) quizScore = 0;
                 selectedButton.classList.add('incorrect');
                 optionButtons[correctIndex].classList.add('correct');
                 quizFeedbackEl.textContent = "Incorrect! -3 Points";
@@ -1332,14 +1382,19 @@ s.greet()`)}
             }, 1500);
         }
         
-        function runQuizTimer() {
+        function startQuizTimer() {
             quizStartTime = new Date();
+            let timeLeft = QUIZ_TIME_LIMIT;
             clearInterval(quizTimerInterval);
             
+            quizTimerEl.textContent = formatTime(timeLeft);
+
             quizTimerInterval = setInterval(() => {
-                const now = new Date();
-                const elapsedSeconds = Math.floor((now - quizStartTime) / 1000);
-                quizTimerEl.textContent = formatTime(elapsedSeconds);
+                timeLeft--;
+                quizTimerEl.textContent = formatTime(timeLeft);
+                if (timeLeft <= 0) {
+                    endQuiz();
+                }
             }, 1000);
         }
 
