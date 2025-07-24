@@ -238,6 +238,19 @@
             transform: scale(1.1);
         }
 
+        /* Typing Animation */
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            background-color: #67e8f9;
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { background-color: transparent }
+            50% { background-color: #67e8f9; }
+        }
+
     </style>
 </head>
 <body class="text-gray-200">
@@ -250,7 +263,7 @@
             <h1 class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
                 <span class="font-tech">RevvUp</span>
             </h1>
-            <p class="text-2xl text-gray-300 mt-4 font-tech">Level up your code knowledge.</p>
+            <p id="typing-subtitle" class="text-2xl text-gray-300 mt-4 font-tech h-8"></p>
             <button id="start-btn" class="mt-12 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg shadow-cyan-500/20 animated-btn">
                 Start Revising
             </button>
@@ -1652,7 +1665,7 @@ s.greet()`)}
             if (selectedIndex === correctIndex) {
                 quizScore += 10;
                 selectedButton.classList.add('correct');
-                quizFeedbackEl.textContent = "Correct! +10 Points �";
+                quizFeedbackEl.textContent = "Correct! +10 Points 🎉";
                 quizFeedbackEl.className = 'text-center mt-4 h-6 text-green-400 font-semibold';
             } else {
                 quizScore -= 3;
@@ -1927,7 +1940,10 @@ s.greet()`)}
 
         // --- GEMINI API FUNCTIONS ---
 
-        const apiKey = ""; // IMPORTANT: LEAVE THIS EMPTY.
+        // IMPORTANT: To deploy this on a live site (like GitHub Pages), you MUST
+        // replace "YOUR_API_KEY" with your actual Gemini API key.
+        // Get your key from Google AI Studio: https://aistudio.google.com/app/apikey
+        const apiKey = "AIzaSyDc4Dri7UmplYYlyEM1HHiolgGoLILc8Ms"; 
 
         function stripHtml(html){
            let doc = new DOMParser().parseFromString(html, 'text/html');
@@ -1940,6 +1956,11 @@ s.greet()`)}
 
             if (!topic || !count) {
                 alert("Please provide a topic and the number of cards.");
+                return;
+            }
+            
+            if (apiKey === "AIzaSyDc4Dri7UmplYYlyEM1HHiolgGoLILc8Ms") {
+                alert("Please replace 'YOUR_API_KEY' in the code with your actual Gemini API key to use this feature.");
                 return;
             }
 
@@ -2010,6 +2031,13 @@ s.greet()`)}
             const allDecks = getFullDeckData();
             const card = allDecks[selectedDeck][currentCardIndex];
             const concept = stripHtml(card.a);
+
+            if (apiKey === "AIzaSyDc4Dri7UmplYYlyEM1HHiolgGoLILc8Ms") {
+                explanationContent.innerHTML = "To use the AI Explanation feature on a live website, you need to add your Gemini API key to the code.";
+                explanationModal.classList.remove('hidden');
+                explanationModal.classList.add('flex');
+                return;
+            }
 
             explanationContent.innerHTML = '<div class="flex justify-center"><div class="spinner"></div></div>';
             explanationModal.classList.remove('hidden');
@@ -2183,6 +2211,23 @@ s.greet()`)}
             }
         });
 
+        // --- Typing Animation ---
+        function typeEffect() {
+            const target = document.getElementById('typing-subtitle');
+            const text = "<Level up your code knowledge>";
+            let i = 0;
+            target.innerHTML = `<span class="typing-cursor" style="height: 1.5rem;"></span>`; // Start with cursor
+            
+            function type() {
+                if (i < text.length) {
+                    target.innerHTML = text.substring(0, i + 1) + `<span class="typing-cursor" style="height: 1.5rem;"></span>`;
+                    i++;
+                    setTimeout(type, 100);
+                }
+            }
+            type();
+        }
+
         // --- Initial Style Setup for Reused Components ---
         function applyStyles() {
             const baseButtonStyles = "bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-6 rounded-lg shadow-md";
@@ -2201,6 +2246,7 @@ s.greet()`)}
         
         // --- INITIAL LOAD ---
         applyStyles();
+        typeEffect();
     </script>
 </body>
 </html>
