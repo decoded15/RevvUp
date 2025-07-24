@@ -225,6 +225,24 @@
              background-image: linear-gradient(to right, #f87171 0%, #ef4444 51%, #f87171 100%);
         }
 
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .text-gradient-cyan {
+            background-image: linear-gradient(to right, #67e8f9, #22d3ee);
+        }
+        .text-gradient-blue {
+            background-image: linear-gradient(to right, #60a5fa, #3b82f6);
+        }
+        .text-gradient-green {
+            background-image: linear-gradient(to right, #4ade80, #22c55e);
+        }
+        .text-gradient-purple {
+            background-image: linear-gradient(to right, #a78bfa, #8b5cf6);
+        }
+
         @keyframes search-glow {
             0% { box-shadow: 0 0 5px rgba(56, 189, 248, 0.2); border-color: #38bdf8; }
             50% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.6); border-color: #0ea5e9; }
@@ -320,19 +338,19 @@
             <p class="text-center text-gray-400 mb-8">Choose your challenge.</p>
             <div class="space-y-4">
                 <div class="mode-card" data-mode="flashcards">
-                    <h3 class="text-xl font-semibold">Flashcards</h3>
+                    <h3 class="text-xl font-semibold text-gradient text-gradient-cyan">Flashcards</h3>
                     <p class="text-gray-400">Flip through cards to test your knowledge.</p>
                 </div>
                 <div class="mode-card" data-mode="cheatsheet">
-                    <h3 class="text-xl font-semibold">Cheat Sheet</h3>
+                    <h3 class="text-xl font-semibold text-gradient text-gradient-blue">Cheat Sheet</h3>
                     <p class="text-gray-400">Get a quick overview of key concepts.</p>
                 </div>
                 <div class="mode-card" data-mode="quiz">
-                    <h3 class="text-xl font-semibold">Quiz Me!</h3>
+                    <h3 class="text-xl font-semibold text-gradient text-gradient-green">Quiz Me!</h3>
                     <p class="text-gray-400">Take a quiz and earn XP.</p>
                 </div>
                  <div class="mode-card" data-mode="analytics">
-                    <h3 class="text-xl font-semibold">Analytics</h3>
+                    <h3 class="text-xl font-semibold text-gradient text-gradient-purple">Analytics</h3>
                     <p class="text-gray-400">Track your learning progress.</p>
                 </div>
             </div>
