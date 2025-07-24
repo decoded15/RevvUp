@@ -26,6 +26,15 @@
         .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2.5rem; text-align: center; border-radius: 1rem; }
         .flashcard-back { transform: rotateY(180deg); overflow-y: auto; }
         
+        .flashcard-back .answer-content {
+            text-align: center;
+        }
+        .flashcard-back .code-window {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left; /* Keep code left-aligned within its window */
+        }
+
         .code-window {
             background-color: #1f2937; border-radius: 0.75rem; padding-top: 2.5rem;
             position: relative; text-align: left; overflow: hidden; margin-top: 1rem; width: 100%;
@@ -44,6 +53,12 @@
             font-size: 0.9em; color: #d1d5db;
         }
         
+        #bookmark-btn svg {
+            transition: transform 0.2s ease-in-out;
+        }
+        #bookmark-btn:hover svg {
+            transform: scale(1.2);
+        }
         #bookmark-btn.bookmarked svg {
             fill: #f59e0b;
             stroke: #f59e0b;
@@ -66,12 +81,11 @@
             border-radius: 0.25rem;
         }
         
-        /* Override for code inside macOS-style windows */
         .code-window code {
             color: inherit;
             background-color: transparent;
             padding: 0;
-            font-weight: normal; /* Use the font-weight from the <pre> tag */
+            font-weight: normal; 
         }
 
         .cheatsheet-content h3 {
@@ -174,6 +188,51 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Enhanced Animations */
+        .animated-btn {
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .animated-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+        }
+        .animated-btn:active {
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
+        }
+        
+        @keyframes search-glow {
+            0% { box-shadow: 0 0 5px rgba(56, 189, 248, 0.2); border-color: #38bdf8; }
+            50% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.6); border-color: #0ea5e9; }
+            100% { box-shadow: 0 0 5px rgba(56, 189, 248, 0.2); border-color: #38bdf8; }
+        }
+
+        #topic-search-input {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .search-container:hover #topic-search-input {
+            transform: scale(1.02);
+            border-color: #38bdf8;
+        }
+
+        .search-container:focus-within #topic-search-input {
+            transform: scale(1.02);
+            animation: search-glow 2s linear infinite;
+        }
+        
+        .search-container:hover svg {
+            fill: #0ea5e9;
+        }
+        .copy-code-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .copy-code-btn:hover {
+            background-color: #374151;
+            transform: scale(1.1);
+        }
+
     </style>
 </head>
 <body class="text-gray-200">
@@ -187,7 +246,7 @@
                 <span class="font-tech">RevvUp</span>
             </h1>
             <p class="text-2xl text-gray-300 mt-4 font-tech">Level up your code knowledge.</p>
-            <button id="start-btn" class="mt-12 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg shadow-cyan-500/20 transition-all duration-200 transform hover:scale-110">
+            <button id="start-btn" class="mt-12 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg shadow-cyan-500/20 animated-btn">
                 Start Revising
             </button>
             <footer class="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-gray-600">
@@ -248,14 +307,14 @@
         <div id="deck-select-page" class="page justify-center">
             <h2 class="text-3xl font-bold text-center mb-4">Select a Topic</h2>
             <div class="flex justify-center space-x-4 mb-6">
-                <button id="view-bookmarks-btn" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-2 px-6 rounded-lg shadow-lg shadow-amber-500/20 transition-all duration-200">View Bookmarks</button>
-                <button id="create-deck-nav-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg shadow-lg shadow-cyan-500/20 transition-all duration-200">Create New Deck</button>
+                <button id="view-bookmarks-btn" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-2 px-6 rounded-lg shadow-lg shadow-amber-500/20 animated-btn">View Bookmarks</button>
+                <button id="create-deck-nav-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg shadow-lg shadow-cyan-500/20 animated-btn">Create New Deck</button>
             </div>
-            <div class="relative w-full max-w-lg mx-auto mb-6">
-                <input type="text" id="topic-search-input" placeholder="Search for a topic..." class="w-full bg-gray-700 border border-gray-600 rounded-full py-3 pl-5 pr-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300">
-                <svg class="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                </svg>
+            <div class="relative w-full max-w-lg mx-auto mb-6 search-container">
+                <input type="text" id="topic-search-input" placeholder="Search for a topic..." class="w-full bg-gray-700 border border-gray-600 rounded-full py-3 pl-5 pr-12 text-white placeholder-gray-400 focus:outline-none transition-all duration-300">
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400">
+                    <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' class="transition-colors duration-300" style='fill: rgba(156, 163, 175, 1);'><path d='M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z'></path></svg>
+                </div>
             </div>
             <div id="deck-list" class="space-y-6 w-full">
                 <!-- Deck categories and cards will be dynamically inserted here -->
@@ -267,8 +326,8 @@
         <div id="flashcard-page" class="page justify-center">
             <div class="w-full flex justify-end mb-2">
                 <button id="bookmark-btn" title="Bookmark this card" class="p-2 rounded-full hover:bg-gray-700 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                     </svg>
                 </button>
             </div>
@@ -286,10 +345,10 @@
             </div>
             <div id="progress-indicator" class="text-center mt-6 text-gray-500 font-tech"></div>
             <div class="flex justify-between items-center mt-6 w-full max-w-md self-center">
-                <button id="prev-btn" class="nav-btn">Prev</button>
-                <button id="flip-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-4 px-10 rounded-lg shadow-lg shadow-cyan-500/20 transition-all duration-200 transform hover:scale-110">Flip</button>
-                <button id="next-btn" class="nav-btn">Next</button>
-                <button id="next-deck-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105" style="display: none;">Next Deck &rarr;</button>
+                <button id="prev-btn" class="nav-btn animated-btn">Prev</button>
+                <button id="flip-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-4 px-10 rounded-lg shadow-lg shadow-cyan-500/20 animated-btn">Flip</button>
+                <button id="next-btn" class="nav-btn animated-btn">Next</button>
+                <button id="next-deck-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md animated-btn" style="display: none;">Next Deck &rarr;</button>
             </div>
             <button class="back-btn" data-target="deck-select-page">&larr; Change Topic</button>
         </div>
@@ -347,7 +406,7 @@
                     <li>🎯 Total possible score: <strong id="instr-total-points" class="text-white"></strong> points.</li>
                     <li>🏆 To pass, you must score at least <strong class="text-cyan-400">70%</strong> (that's <strong id="instr-passing-score" class="text-cyan-400"></strong> points).</li>
                 </ul>
-                <button id="start-quiz-btn" class="mt-8 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg">
+                <button id="start-quiz-btn" class="mt-8 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg animated-btn">
                     Start Quiz
                 </button>
             </div>
@@ -364,7 +423,7 @@
                         </svg>
                         <div id="quiz-timer" class="font-bold text-2xl text-cyan-400 font-tech">20:00</div>
                     </div>
-                    <button id="end-quiz-btn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">End Quiz</button>
+                    <button id="end-quiz-btn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg text-sm animated-btn">End Quiz</button>
                 </div>
                 <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
                     <p class="text-gray-400 text-sm">Question <span id="quiz-question-number">1</span> of <span id="quiz-total-questions">25</span></p>
@@ -390,7 +449,7 @@
             </div>
             <p id="final-time-taken" class="text-lg mt-2 font-tech"></p>
             <p id="final-message" class="text-xl text-gray-300 mt-4"></p>
-            <button id="try-again-btn" class="mt-8 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg">
+            <button id="try-again-btn" class="mt-8 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-10 rounded-lg shadow-lg animated-btn">
                 Try Another Quiz
             </button>
         </div>
@@ -432,7 +491,7 @@
                 <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">Create a Custom Deck</h2>
                 <div class="bg-gray-800 p-6 rounded-lg">
                     <div class="flex justify-center mb-6">
-                        <button id="gemini-generate-btn" class="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105">
+                        <button id="gemini-generate-btn" class="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg animated-btn">
                             ✨ Generate with AI
                         </button>
                     </div>
@@ -441,8 +500,8 @@
                         <!-- Card input fields will be added here -->
                     </div>
                     <div class="flex justify-between mt-6">
-                        <button id="add-card-btn" class="bg-gray-700 hover:bg-gray-600 text-cyan-400 font-bold py-2 px-4 rounded-lg">+ Add Card</button>
-                        <button id="save-deck-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg">Save Deck</button>
+                        <button id="add-card-btn" class="bg-gray-700 hover:bg-gray-600 text-cyan-400 font-bold py-2 px-4 rounded-lg animated-btn">+ Add Card</button>
+                        <button id="save-deck-btn" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg animated-btn">Save Deck</button>
                     </div>
                 </div>
                  <button class="back-btn" data-target="deck-select-page">&larr; Back to Topics</button>
@@ -461,7 +520,7 @@
             <div id="gemini-deck-form">
                 <input type="text" id="ai-deck-topic" placeholder="e.g., JavaScript Array Methods" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500">
                 <input type="number" id="ai-deck-count" placeholder="Number of cards (e.g., 10)" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500" min="1" max="20">
-                <button id="trigger-gemini-generation" class="w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 rounded-lg">Generate</button>
+                <button id="trigger-gemini-generation" class="w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 rounded-lg animated-btn">Generate</button>
             </div>
             <div id="gemini-deck-loading" class="hidden flex-col items-center justify-center">
                 <div class="spinner"></div>
@@ -495,7 +554,10 @@
                         <span class="code-window-dot green"></span>
                     </div>
                     <pre><code>${escapedCode.trim()}</code></pre>
-                    <button class="copy-code-btn absolute bottom-2 right-2 bg-gray-600 hover:bg-gray-500 text-white text-xs font-semibold px-3 py-1 rounded-md transition-colors duration-200">Copy</button>
+                    <button class="copy-code-btn absolute bottom-2 right-2 bg-gray-600 p-1.5 rounded-md">
+                        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' style='fill:white;'><path d='M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2H10V4h10v10z'></path></svg>
+                        <span class="copy-tooltip absolute -top-8 right-0 bg-gray-900 text-white text-xs px-2 py-1 rounded-md opacity-0 transition-opacity duration-300">Copied!</span>
+                    </button>
                 </div>
             `;
         }
@@ -1363,9 +1425,9 @@ s.greet()`)}
             const card = cards[currentCardIndex];
             cardFrontText.innerHTML = card.q;
             
-            // Add the "Explain This" button to the answer
-            cardBackText.innerHTML = card.a + `
-                <button class="explain-btn mt-4 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105">
+            cardBackText.innerHTML = `
+                <div class="answer-content">${card.a}</div>
+                <button class="explain-btn mt-6 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-bold py-2 px-4 rounded-lg shadow-lg animated-btn">
                     ✨ Explain This
                 </button>
             `;
@@ -2054,28 +2116,26 @@ s.greet()`)}
 
         // Event delegation for dynamically added buttons
         document.body.addEventListener('click', function(e) {
-            if (e.target.classList.contains('copy-code-btn')) {
-                const button = e.target;
-                const codeWindow = button.closest('.code-window');
+            const copyBtn = e.target.closest('.copy-code-btn');
+            if (copyBtn) {
+                const codeWindow = copyBtn.closest('.code-window');
                 const codeEl = codeWindow.querySelector('pre code');
                 const codeToCopy = codeEl.innerText;
+                const tooltip = copyBtn.querySelector('.copy-tooltip');
 
-                if (navigator.clipboard && window.isSecureContext) {
-                    navigator.clipboard.writeText(codeToCopy).then(() => {
-                        button.textContent = 'Copied!';
-                        setTimeout(() => { button.textContent = 'Copy'; }, 2000);
-                    });
-                } else {
-                    const tempTextArea = document.createElement('textarea');
-                    tempTextArea.value = codeToCopy;
-                    document.body.appendChild(tempTextArea);
-                    tempTextArea.select();
+                // Fallback for non-secure contexts or older browsers
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = codeToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                try {
                     document.execCommand('copy');
-                    document.body.removeChild(tempTextArea);
-                    
-                    button.textContent = 'Copied!';
-                    setTimeout(() => { button.textContent = 'Copy'; }, 2000);
+                    tooltip.style.opacity = '1';
+                    setTimeout(() => { tooltip.style.opacity = '0'; }, 2000);
+                } catch (err) {
+                    console.error('Fallback: Oops, unable to copy', err);
                 }
+                document.body.removeChild(tempTextArea);
             }
 
             if (e.target.classList.contains('explain-btn')) {
@@ -2116,14 +2176,14 @@ s.greet()`)}
 
         // --- Initial Style Setup for Reused Components ---
         function applyStyles() {
-            const baseButtonStyles = "bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105";
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = baseButtonStyles);
+            const baseButtonStyles = "bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-3 px-6 rounded-lg shadow-md";
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = `${baseButtonStyles} animated-btn`);
             
             const cardBaseStyles = "bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-cyan-400 hover:bg-gray-700 cursor-pointer transition-all duration-200 shadow-lg";
             document.querySelectorAll('.language-card').forEach(card => card.className = `${cardBaseStyles} flex flex-col items-center justify-center text-cyan-400`);
             document.querySelectorAll('.mode-card').forEach(card => card.className = `${cardBaseStyles} text-left`);
             
-            const backBtnStyles = "bg-gray-800 text-gray-400 hover:text-cyan-400 border border-gray-700 hover:border-cyan-500 font-semibold py-2 px-5 rounded-lg transition-all duration-200 self-center mt-12";
+            const backBtnStyles = "bg-gray-800 text-gray-400 hover:text-cyan-400 border border-gray-700 hover:border-cyan-500 font-semibold py-2 px-5 rounded-lg transition-all duration-200 self-center mt-12 animated-btn";
             const backBtnStyleArray = backBtnStyles.split(' ');
             document.querySelectorAll('.back-btn').forEach(btn => {
                 btn.classList.add(...backBtnStyleArray);
