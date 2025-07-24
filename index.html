@@ -26,8 +26,13 @@
         .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2.5rem; text-align: center; border-radius: 1rem; }
         .flashcard-back { transform: rotateY(180deg); overflow-y: auto; }
         
-        .flashcard-back .answer-content {
+        #card-back-text {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
         }
         .flashcard-back .code-window {
             margin-left: auto;
@@ -213,12 +218,12 @@
         }
 
         .search-container:hover #topic-search-input {
-            transform: scale(1.02);
+            transform: scale(1.03);
             border-color: #38bdf8;
         }
 
         .search-container:focus-within #topic-search-input {
-            transform: scale(1.02);
+            transform: scale(1.03);
             animation: search-glow 2s linear infinite;
         }
         
@@ -337,7 +342,7 @@
                         <p id="card-front-text" class="text-2xl md:text-3xl font-semibold font-tech"></p>
                     </div>
                     <div id="flashcard-back" class="flashcard-back bg-gray-900 border border-cyan-400">
-                        <div id="card-back-content" class="w-full h-full">
+                        <div id="card-back-content" class="w-full h-full flex flex-col items-center justify-center">
                             <div id="card-back-text" class="text-lg md:text-xl font-tech w-full"></div>
                         </div>
                     </div>
@@ -1647,7 +1652,7 @@ s.greet()`)}
             if (selectedIndex === correctIndex) {
                 quizScore += 10;
                 selectedButton.classList.add('correct');
-                quizFeedbackEl.textContent = "Correct! +10 Points 🎉";
+                quizFeedbackEl.textContent = "Correct! +10 Points �";
                 quizFeedbackEl.className = 'text-center mt-4 h-6 text-green-400 font-semibold';
             } else {
                 quizScore -= 3;
@@ -1924,6 +1929,11 @@ s.greet()`)}
 
         const apiKey = ""; // IMPORTANT: LEAVE THIS EMPTY.
 
+        function stripHtml(html){
+           let doc = new DOMParser().parseFromString(html, 'text/html');
+           return doc.body.textContent || "";
+        }
+
         async function generateDeckWithGemini() {
             const topic = document.getElementById('ai-deck-topic').value;
             const count = document.getElementById('ai-deck-count').value;
@@ -1997,10 +2007,9 @@ s.greet()`)}
         }
 
         async function explainCardWithGemini() {
-            const answerElement = cardBackText.cloneNode(true);
-            // Remove the "Explain This" button from the cloned element before getting text
-            answerElement.querySelector('.explain-btn')?.remove();
-            const concept = answerElement.innerText;
+            const allDecks = getFullDeckData();
+            const card = allDecks[selectedDeck][currentCardIndex];
+            const concept = stripHtml(card.a);
 
             explanationContent.innerHTML = '<div class="flex justify-center"><div class="spinner"></div></div>';
             explanationModal.classList.remove('hidden');
@@ -2035,7 +2044,7 @@ s.greet()`)}
 
             } catch (error) {
                 console.error("Gemini API Error:", error);
-                explanationContent.innerHTML = "Sorry, I couldn't get an explanation at this time.";
+                explanationContent.innerHTML = "Sorry, I couldn't get an explanation at this time. Please try again later.";
             }
         }
         
