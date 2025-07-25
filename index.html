@@ -286,6 +286,29 @@
             from, to { background-color: transparent }
             50% { background-color: #67e8f9; }
         }
+        
+        .deck-card {
+            background-size: 200% auto;
+            transition: all 0.3s ease-in-out;
+        }
+        .deck-card:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+        }
+
+        .deck-gradient-green {
+            background-image: linear-gradient(to right, #1f2937 0%, #166534 100%);
+        }
+        .deck-gradient-yellow {
+             background-image: linear-gradient(to right, #1f2937 0%, #a16207 100%);
+        }
+        .deck-gradient-blue {
+             background-image: linear-gradient(to right, #1f2937 0%, #1e40af 100%);
+        }
+        .deck-gradient-amber {
+            background-image: linear-gradient(to right, #1f2937 0%, #b45309 100%);
+        }
+
 
     </style>
 </head>
@@ -1002,9 +1025,87 @@
                     ]
                 }
             },
+            html: {
+                flashcards: {
+                    "📄 Document Structure": [
+                        { q: "What is the basic structure of an HTML5 document?", a: "It starts with <code>&lt;!DOCTYPE html&gt;</code>, followed by <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, and <code>&lt;body&gt;</code> sections." + createCodeWindow('<!DOCTYPE html>\n<html>\n<head>\n  <title>Page Title</title>\n</head>\n<body>\n  <h1>My First Heading</h1>\n  <p>My first paragraph.</p>\n</body>\n</html>') },
+                        { q: "What is the purpose of <code>&lt;!DOCTYPE html&gt;</code>?", a: "It's a declaration that tells the browser the document is an HTML5 document. It is required for the browser to render the page in standards mode." },
+                        { q: "What does the <code>&lt;head&gt;</code> element contain?", a: "It contains meta-information about the document, like the title, character set, styles, and scripts. This content is not displayed on the page." + createCodeWindow('<head>\n  <meta charset="UTF-8">\n  <title>My Page</title>\n</head>') },
+                        { q: "What is the role of the <code>&lt;body&gt;</code> element?", a: "It contains all the visible content of the HTML document, such as headings, paragraphs, images, hyperlinks, tables, and lists." },
+                        { q: "What is the <code>&lt;title&gt;</code> tag used for?", a: "It defines the title of the document, which is shown in the browser's title bar or in the page's tab." },
+                        { q: "What is the <code>&lt;meta charset=\"UTF-8\"&gt;</code> tag for?", a: "It specifies the character encoding for the HTML document. UTF-8 is a universal character set that includes almost all characters and symbols." },
+                        { q: "Difference between <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, and <code>&lt;head&gt;</code>?", a: "<code>&lt;head&gt;</code> contains metadata. <code>&lt;header&gt;</code> and <code>&lt;footer&gt;</code> are semantic body elements. <code>&lt;header&gt;</code> contains introductory content/navigation, and <code>&lt;footer&gt;</code> contains contact info, copyright, etc." },
+                        { q: "What is the purpose of the <code>lang</code> attribute in the <code>&lt;html&gt;</code> tag?", a: "It declares the primary language of the web page, which helps search engines and screen readers." + createCodeWindow('<html lang="en">') },
+                        { q: "What are semantic HTML tags?", a: "Tags that clearly describe their meaning to both the browser and the developer. Examples: <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;header&gt;</code>, and <code>&lt;footer&gt;</code>." },
+                        { q: "How do you link a CSS stylesheet to an HTML document?", a: "Using the <code>&lt;link&gt;</code> tag inside the <code>&lt;head&gt;</code> section." + createCodeWindow('<link rel="stylesheet" href="styles.css">') }
+                    ],
+                    "✍️ Text Formatting": [
+                        { q: "What does the &lt;strong&gt; tag do?", a: "Emphasizes text with strong importance (usually bold)." + createCodeWindow('<strong>Warning!</strong>') },
+                        { q: "What is the purpose of &lt;em&gt;?", a: "Emphasizes text with stress (usually italic)." + createCodeWindow('<em>Note this point</em>') },
+                        { q: "Difference between &lt;b&gt; and &lt;strong&gt;?", a: "<code>&lt;b&gt;</code> is visual (bold), <code>&lt;strong&gt;</code> is semantic (important meaning)." },
+                        { q: "Difference between &lt;i&gt; and &lt;em&gt;?", a: "<code>&lt;i&gt;</code> is visual (italic), <code>&lt;em&gt;</code> is semantic (emphasis)." },
+                        { q: "How to display underlined text in HTML5?", a: "Use the <code>&lt;u&gt;</code> tag." + createCodeWindow('<u>Important</u>') },
+                        { q: "What is &lt;mark&gt; used for?", a: "Highlights text with a yellow background." + createCodeWindow('<mark>Search term</mark>') },
+                        { q: "Which tag shows deleted text?", a: "<code>&lt;del&gt;</code> — renders text with a strikethrough." + createCodeWindow('<del>Old price: $50</del>') },
+                        { q: "Which tag shows inserted text?", a: "<code>&lt;ins&gt;</code> — underlines inserted content." + createCodeWindow('<ins>New price: $40</ins>') },
+                        { q: "How to display superscript and subscript?", a: "Use <code>&lt;sup&gt;</code> and <code>&lt;sub&gt;</code>." + createCodeWindow('H<sub>2</sub>O and E = mc<sup>2</sup>') },
+                        { q: "What tag is used to define computer code inline?", a: "<code>&lt;code&gt;</code>" + createCodeWindow('Use the <code>print()</code> function.') }
+                    ],
+                    "🔗 Links": [
+                        { q: "What is the basic syntax of a hyperlink?", a: 'Use the <code>&lt;a&gt;</code> tag with href attribute.' + createCodeWindow('<a href="https://example.com">Visit</a>') },
+                        { q: 'What does target="_blank" do?', a: 'Opens the link in a new browser tab.' + createCodeWindow('<a href="..." target="_blank">New Tab</a>') },
+                        { q: "How do you create an internal page link?", a: 'Link to an element’s id.' + createCodeWindow('<a href="#about">About</a>\n...\n<h2 id="about">About Us</h2>') },
+                        { q: "How to link to an email address?", a: 'Use mailto: inside href.' + createCodeWindow('<a href="mailto:dibs@example.com">Email Me</a>') },
+                        { q: "How to link to a phone number?", a: 'Use tel:' + createCodeWindow('<a href="tel:+919999999999">Call Now</a>') },
+                        { q: "What happens if href is set to #?", a: "It links to the top of the page or does nothing (used as placeholder)." },
+                        { q: "How to make a button behave like a link?", a: "Style the <code>&lt;a&gt;</code> tag with CSS to look like a button." },
+                        { q: "Can links be styled with CSS?", a: "Yes. Use pseudo-classes like :hover, :visited, :active." },
+                        { q: "What’s the difference between absolute and relative links?", a: 'Absolute: full URL' + createCodeWindow('<a href="https://google.com">Google</a>') + 'Relative: relative to current path' + createCodeWindow('<a href="about.html">About</a>') },
+                        { q: "What’s a download link?", a: 'Add download attribute to download the file.' + createCodeWindow('<a href="resume.pdf" download>Download Resume</a>') }
+                    ],
+                    "🖼️ Images": [
+                        { q: "What is the basic syntax for embedding an image?", a: 'Use the <code>&lt;img&gt;</code> tag with src and alt.' + createCodeWindow('<img src="cat.jpg" alt="A cute cat">') },
+                        { q: "What does the alt attribute do?", a: "Provides alternative text if the image can’t load (also improves accessibility)." },
+                        { q: "What is the use of width and height attributes?", a: "Sets image dimensions (in pixels or %)." + createCodeWindow('<img src="pic.jpg" width="300" height="200">') },
+                        { q: "How to make an image clickable?", a: "Wrap it in an anchor tag." + createCodeWindow('<a href="home.html"><img src="logo.png" alt="Logo"></a>') },
+                        { q: "What’s the difference between src and srcset?", a: "srcset allows responsive image loading (different sizes for devices)." },
+                        { q: 'How to load a placeholder while the image loads?', a: 'Use loading="lazy" attribute.' + createCodeWindow('<img src="large.jpg" loading="lazy">') },
+                        { q: "Can CSS be used to style images?", a: "Yes. Use border-radius, box-shadow, width, etc." },
+                        { q: "How to add a tooltip to an image?", a: "Use the title attribute." + createCodeWindow('<img src="info.png" title="Helpful Info">') },
+                        { q: "Can you use base64 images in HTML?", a: "Yes, embed directly using data URI inside src." },
+                        { q: "What’s the semantic difference between &lt;figure&gt; and &lt;img&gt;?", a: "<code>&lt;figure&gt;</code> is used to group an image with a caption (<code>&lt;figcaption&gt;</code>)." + createCodeWindow('<figure>\n  <img src="sunset.jpg" alt="Sunset">\n  <figcaption>Sunset in Goa</figcaption>\n</figure>') }
+                    ],
+                    "📋 Lists": [
+                        { q: "What is an unordered list?", a: "A bulleted list using <code>&lt;ul&gt;</code> and <code>&lt;li&gt;</code>." + createCodeWindow('<ul>\n  <li>Milk</li>\n  <li>Bread</li>\n</ul>') },
+                        { q: "What is an ordered list?", a: "A numbered list using <code>&lt;ol&gt;</code> and <code>&lt;li&gt;</code>." + createCodeWindow('<ol>\n  <li>Wake up</li>\n  <li>Brush</li>\n</ol>') },
+                        { q: "How to start an ordered list at a specific number?", a: "Use the start attribute." + createCodeWindow('<ol start="5">...</ol>') },
+                        { q: "How to reverse an ordered list?", a: "Add reversed attribute." + createCodeWindow('<ol reversed>...</ol>') },
+                        { q: "What is a description list?", a: "A list of terms and their definitions using <code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, <code>&lt;dd&gt;</code>." + createCodeWindow('<dl>\n  <dt>HTML</dt>\n  <dd>HyperText Markup Language</dd>\n</dl>') },
+                        { q: "Can lists be nested?", a: "Yes. A <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code> can contain another list inside an <code>&lt;li&gt;</code>." },
+                        { q: "How to change the bullet style in a list?", a: "Use CSS:" + createCodeWindow('ul { list-style-type: square; }') },
+                        { q: "How to remove list bullets?", a: 'Use CSS:' + createCodeWindow('ul { list-style-type: none; }') },
+                        { q: "Can you use images as bullets?", a: "Yes, using list-style-image." + createCodeWindow('ul { list-style-image: url("dot.png"); }') },
+                        { q: "How to make a horizontal navigation list?", a: "Use <code>&lt;ul&gt;</code> with display: inline or flex in CSS." }
+                    ]
+                },
+                quiz: {
+                    beginner: [], intermediate: [], oop: [], marathon: []
+                }
+            },
             javascript: {
                 flashcards: {
                     "General": [ { q: "What is a 'closure'?", a: "A function that remembers the variables from the scope where it was created." }, { q: "Explain <code>==</code> vs <code>===</code>.", a: "<code>==</code> is for loose equality (type coercion). <code>===</code> is for strict equality (value and type)." }, { q: "What is a Promise?", a: "An object representing the eventual completion or failure of an async operation."} ]
+                },
+                quiz: {
+                    beginner: [], intermediate: [], oop: [], marathon: []
+                }
+            },
+            css: {
+                flashcards: {
+                    "Basics": [ { q: "Coming Soon!", a: "Content for this topic is under development." } ]
+                },
+                quiz: {
+                    beginner: [], intermediate: [], oop: [], marathon: []
                 }
             }
         };
@@ -1159,7 +1260,37 @@ s = Student("Ommi")
 s.greet()`)}
                     <p>🧠 <code>__init__()</code> is like a constructor. 💡 <code>self</code> refers to the current object.</p>
                 </div>
-            `
+            `,
+            html: `
+                <div class="cheatsheet-content">
+                    <h2 class="text-3xl font-bold text-center mb-6 text-cyan-400">📄 HTML5 Cheatsheet</h2>
+                    <h3>Document Structure</h3>
+                     ${createCodeWindow(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Title</title>
+</head>
+<body>
+    <!-- Visible content goes here -->
+</body>
+</html>`)}
+                    <h3>Text Elements</h3>
+                     ${createCodeWindow(`<h1>Heading 1</h1> to <h6>Heading 6</h6>
+<p>This is a paragraph.</p>
+<strong>Bold (important)</strong>
+<em>Italic (emphasis)</em>
+<a href="https://example.com">This is a link</a>`)}
+                    <h3>Lists</h3>
+                    <p>Unordered List:</p>
+                    ${createCodeWindow(`<ul>\n  <li>Item 1</li>\n  <li>Item 2</li>\n</ul>`)}
+                     <p>Ordered List:</p>
+                    ${createCodeWindow(`<ol>\n  <li>First</li>\n  <li>Second</li>\n</ol>`)}
+                </div>
+            `,
+            javascript: `<div class="cheatsheet-content"><h2 class="text-3xl font-bold text-center mb-6 text-cyan-400">Coming Soon</h2></div>`,
+            css: `<div class="cheatsheet-content"><h2 class="text-3xl font-bold text-center mb-6 text-cyan-400">Coming Soon</h2></div>`
         };
 
 
@@ -1168,6 +1299,15 @@ s.greet()`)}
                 "🟢 Beginner-Level": ["📦 Python Basics", "🔢 Variables & Data Types", "➕ Operators", "🔀 Control Flow (if-elif-else)", "🔄 Loops (for, while)", "ƒ Functions", "📋 Lists", "🔗 Tuples", "📚 Dictionaries", "✨ Sets", "✂️ String Manipulation", "🔄 Type Casting", "⌨️ Input/Output"],
                 "🟡 Intermediate-Level": ["📁 File Handling", "⚠️ Error Handling (Exceptions)", "📦 Modules & Packages", "λ Lambda, Map, Filter, Reduce", "⚡ List Comprehensions", "🌐 Scope (Global/Local)", "🔧 Built-in Functions", "🎲 Math & Random Modules"],
                 "🔵 Object-Oriented Programming": ["🏛️ Classes & Objects", "🛠️ Constructors", "👨‍👩‍👧‍👦 Inheritance", "🎭 Polymorphism", "💊 Encapsulation"]
+            },
+            html: {
+                "🟢 Beginner-Level": ["📄 Document Structure", "✍️ Text Formatting", "🔗 Links", "🖼️ Images", "📋 Lists"]
+            },
+            javascript: {
+                "🟢 Beginner-Level": ["General"]
+            },
+            css: {
+                "🟢 Beginner-Level": ["Basics"]
             }
         };
         
@@ -1292,12 +1432,15 @@ s.greet()`)}
             const customDecks = getCustomDecks()[selectedLanguage] || {};
             let orderedDecks = [];
 
-            for (const category in structure) {
-                structure[category].forEach(topicName => {
-                    if (allData[selectedLanguage].flashcards[topicName]?.length > 0) {
-                        orderedDecks.push(topicName);
-                    }
-                });
+            if (structure) {
+                for (const category in structure) {
+                    structure[category].forEach(topicName => {
+                        const allDecks = getFullDeckData();
+                        if (allDecks[topicName]?.length > 0) {
+                            orderedDecks.push(topicName);
+                        }
+                    });
+                }
             }
             orderedDecks = [...orderedDecks, ...Object.keys(customDecks)];
             return orderedDecks;
@@ -1308,6 +1451,11 @@ s.greet()`)}
             const customDecks = getCustomDecks()[lang] || {};
             deckList.innerHTML = ''; 
             const progress = getProgress();
+
+            if (!structure) {
+                deckList.innerHTML = `<p class="text-center text-gray-500">No topics available for this language yet.</p>`;
+                return;
+            }
 
             // Built-in Decks
             for (const category in structure) {
@@ -1321,7 +1469,7 @@ s.greet()`)}
                 const topicGrid = document.createElement('div');
                 topicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
                 structure[category].forEach(topicName => {
-                    const totalCards = allData[lang].flashcards[topicName]?.length || 0;
+                    const totalCards = allData[lang]?.flashcards?.[topicName]?.length || 0;
                     const highestIndexReached = progress[lang]?.flashcards?.[topicName] ?? -1;
                     if(totalCards > 0) {
                         topicGrid.appendChild(createTopicCard(topicName, highestIndexReached, totalCards));
@@ -1396,7 +1544,7 @@ s.greet()`)}
         }
 
         function getFullDeckData() {
-            const builtInDecks = allData[selectedLanguage].flashcards || {};
+            const builtInDecks = allData[selectedLanguage]?.flashcards || {};
             const customDecks = getCustomDecks()[selectedLanguage] || {};
             return { ...builtInDecks, ...customDecks };
         }
@@ -1588,7 +1736,7 @@ s.greet()`)}
         // --- QUIZ FUNCTIONS ---
         function showQuizInstructions(deckName) {
             selectedQuizDeckName = deckName;
-            const questionsForDeck = allData[selectedLanguage].quiz[deckName] || [];
+            const questionsForDeck = allData[selectedLanguage]?.quiz?.[deckName] || [];
             if (questionsForDeck.length === 0) {
                 alert("This quiz is not available yet.");
                 return;
@@ -1649,7 +1797,7 @@ s.greet()`)}
             if (selectedIndex === correctIndex) {
                 quizScore += 10;
                 selectedButton.classList.add('correct');
-                quizFeedbackEl.textContent = "Correct! +10 Points 🎉";
+                quizFeedbackEl.textContent = "Correct! +10 Points �";
                 quizFeedbackEl.className = 'text-center mt-4 h-6 text-green-400 font-semibold';
             } else {
                 quizScore -= 3;
@@ -2082,3 +2230,4 @@ s.greet()`)}
     </script>
 </body>
 </html>
+�
