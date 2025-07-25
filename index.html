@@ -1086,6 +1086,54 @@
                         { q: "How to remove list bullets?", a: 'Use CSS:' + createCodeWindow('ul { list-style-type: none; }') },
                         { q: "Can you use images as bullets?", a: "Yes, using list-style-image." + createCodeWindow('ul { list-style-image: url("dot.png"); }') },
                         { q: "How to make a horizontal navigation list?", a: "Use <code>&lt;ul&gt;</code> with display: inline or flex in CSS." }
+                    ],
+                    "📝 Forms": [
+                        { q: "What is the basic structure of a form in HTML?", a: 'Use the &lt;form&gt; tag with action and method.' + createCodeWindow('<form action="/submit" method="POST">\n  <!-- form inputs -->\n</form>') },
+                        { q: "What are the most common input types?", a: "text, email, password, radio, checkbox, submit, file." },
+                        { q: "How do you create a text input with a label?", a: '<label for="name">Name:</label>\n<input type="text" id="name" name="username">' },
+                        { q: "How to group inputs under a common heading?", a: 'Use &lt;fieldset&gt; and &lt;legend&gt;.' + createCodeWindow('<fieldset>\n  <legend>Contact Info</legend>\n  <input type="email">\n</fieldset>') },
+                        { q: "How to create a dropdown menu?", a: '<select name="car">\n  <option value="bmw">BMW</option>\n  <option value="audi">Audi</option>\n</select>' },
+                        { q: "How to make a required field?", a: 'Add the required attribute.' + createCodeWindow('<input type="text" required>') },
+                        { q: "How to validate input pattern in a form?", a: 'Use the pattern attribute with regex.' + createCodeWindow('<input type="text" pattern="[A-Za-z]{3}">') },
+                        { q: "How to allow file uploads?", a: 'Use enctype="multipart/form-data" and input type="file".' + createCodeWindow('<form enctype="multipart/form-data">\n  <input type="file" name="myfile">\n</form>') },
+                        { q: "How to create a radio button group?", a: '<input type="radio" name="gender" value="male"> Male\n<input type="radio" name="gender" value="female"> Female' },
+                        { q: "How do you disable or make an input read-only?", a: 'Use disabled or readonly attributes.' + createCodeWindow('<input type="text" disabled>\n<input type="text" readonly>') }
+                    ],
+                    "📊 Tables": [
+                        { q: "What tags are used to create a basic HTML table?", a: '<code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code>.' + createCodeWindow('<table>\n  <tr><th>Name</th><th>Age</th></tr>\n  <tr><td>Dibyansh</td><td>20</td></tr>\n</table>') },
+                        { q: "How to add table headings?", a: "Use <code>&lt;th&gt;</code> inside <code>&lt;tr&gt;</code> for headings (bold + centered by default)." },
+                        { q: "What’s the difference between &lt;thead&gt;, &lt;tbody&gt;, and &lt;tfoot&gt;?", a: "They separate sections of the table — header, body, and footer." },
+                        { q: "How to merge two columns or rows?", a: "Use colspan or rowspan." + createCodeWindow('<td colspan="2">Merged</td>') },
+                        { q: "How to add a border to a table?", a: '<table border="1">...</table>' },
+                        { q: "How to create a caption/title for a table?", a: "Use the <code>&lt;caption&gt;</code> tag just after <code>&lt;table&gt;</code>." },
+                        { q: "How to align table content?", a: "Use text-align and vertical-align via CSS or align attribute." },
+                        { q: "What’s the use of &lt;colgroup&gt; and &lt;col&gt;?", a: "Used to style or apply attributes to entire columns." },
+                        { q: "How to add zebra striping (alternating row colors)?", a: "Use nth-child in CSS." + createCodeWindow('tr:nth-child(even) { background: #eee; }') },
+                        { q: "Can you nest tables inside another table?", a: "Yes, you can place a <code>&lt;table&gt;</code> inside a <code>&lt;td&gt;</code>." }
+                    ],
+                    "🗨️ HTML Comments": [
+                        { q: "How do you write a comment in HTML?", a: '<!-- This is a comment -->' },
+                        { q: "Can comments span multiple lines?", a: 'Yes.' + createCodeWindow('<!--\n  This is a multi-line\n  comment in HTML\n-->') },
+                        { q: "Are comments rendered by the browser?", a: "No, they are completely ignored in display but visible in the page source." },
+                        { q: "Can you use comments to disable elements temporarily?", a: 'Yes.' + createCodeWindow('<!-- <p>This won\'t show up.</p> -->') },
+                        { q: "What happens if you forget the closing --> in a comment?", a: "The browser may comment out everything after it — breaking your layout." },
+                        { q: "Can you put comments inside tags like <p>?", a: 'Yes, but it’s not good practice.' + createCodeWindow('<p>This is <!-- not shown --> visible</p>') },
+                        { q: "Are comments visible in the browser DevTools?", a: "Yes, in the Elements/Inspector tab." },
+                        { q: "Should you use comments in production HTML?", a: "Only if needed—avoid sensitive info as it's still visible in source." },
+                        { q: "Can HTML comments be used in JavaScript?", a: "Not reliably. Use // or /* */ in JS instead." },
+                        { q: "What's a good use case for HTML comments?", a: "Labeling sections, explaining complex structures, or reminders." }
+                    ],
+                    "🧩 HTML Entities": [
+                        { q: "What is an HTML entity?", a: 'A code that represents a special character in HTML. Example: &lt; = <' },
+                        { q: "How do you write an HTML entity?", a: 'Use &name; or &#code; Example: &amp; or &#38;' },
+                        { q: "What does &lt; stand for?", a: "It stands for the less-than symbol <" },
+                        { q: "How do you show a space using an entity?", a: "Use &nbsp; for a non-breaking space." },
+                        { q: 'How do you write " in HTML safely?', a: 'Use &quot;' },
+                        { q: "How do you write an apostrophe ' using an entity?", a: "Use &apos; or &#39;" },
+                        { q: "What does &copy; render as?", a: "It renders the copyright symbol: ©" },
+                        { q: "What entity represents the ampersand (&) itself?", a: "&amp;" },
+                        { q: "Why use entities instead of typing the character directly?", a: "To prevent conflicts with HTML syntax and ensure proper display." },
+                        { q: "How do you display the euro (€) symbol?", a: 'Named: &euro;\nNumeric: &#8364;' }
                     ]
                 },
                 quiz: {
@@ -1301,7 +1349,7 @@ s.greet()`)}
                 "🔵 Object-Oriented Programming": ["🏛️ Classes & Objects", "🛠️ Constructors", "👨‍👩‍👧‍👦 Inheritance", "🎭 Polymorphism", "💊 Encapsulation"]
             },
             html: {
-                "🟢 Beginner-Level": ["📄 Document Structure", "✍️ Text Formatting", "🔗 Links", "🖼️ Images", "📋 Lists"]
+                "🟢 Beginner-Level": ["📄 Document Structure", "✍️ Text Formatting", "🔗 Links", "🖼️ Images", "📋 Lists", "📝 Forms", "📊 Tables", "🗨️ HTML Comments", "🧩 HTML Entities"]
             },
             javascript: {
                 "🟢 Beginner-Level": ["General"]
@@ -1797,7 +1845,7 @@ s.greet()`)}
             if (selectedIndex === correctIndex) {
                 quizScore += 10;
                 selectedButton.classList.add('correct');
-                quizFeedbackEl.textContent = "Correct! +10 Points �";
+                quizFeedbackEl.textContent = "Correct! +10 Points 🎉";
                 quizFeedbackEl.className = 'text-center mt-4 h-6 text-green-400 font-semibold';
             } else {
                 quizScore -= 3;
@@ -2230,4 +2278,3 @@ s.greet()`)}
     </script>
 </body>
 </html>
-�
