@@ -308,6 +308,51 @@
         .deck-gradient-amber {
             background-image: linear-gradient(to right, #1f2937 0%, #b45309 100%);
         }
+        .mode-card {
+    cursor: pointer;
+    padding: 1.5rem 1.25rem;
+    border-radius: 1.25rem;
+    font-size: 1.15rem;
+    box-shadow: 0 8px 32px 0 rgba(31,41,55,0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: all 0.2s cubic-bezier(0.25,0.8,0.25,1);
+    background-size: 200% auto;
+    color: #e0e7ef;
+    border: 2px solid transparent;
+    margin-bottom: 0.5rem;
+}
+.mode-card:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 12px 36px 0 rgba(34,211,238,0.12), 0 2px 4px rgba(0,0,0,0.16);
+    border-color: #38bdf8;
+    background-position: right center;
+}
+.mode-gradient-cyan {
+    background-image: linear-gradient(to right, #06b6d4 0%, #22d3ee 100%);
+}
+.mode-gradient-blue {
+    background-image: linear-gradient(to right, #2563eb 0%, #60a5fa 100%);
+}
+.mode-gradient-green {
+    background-image: linear-gradient(to right, #22c55e 0%, #4ade80 100%);
+}
+.mode-gradient-purple {
+    background-image: linear-gradient(to right, #8b5cf6 0%, #a78bfa 100%);
+}
+@media (min-width: 640px) {
+    .mode-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+}
+@media (min-width: 1024px) {
+    .mode-cards-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
 
 
     </style>
@@ -357,28 +402,30 @@
         
         <!-- ===== Mode Selection Page ===== -->
         <div id="mode-select-page" class="page justify-center">
-            <h2 class="text-3xl font-bold text-center mb-2">How do you want to revise <span id="selected-lang-mode-span" class="text-cyan-400"></span>?</h2>
-            <p class="text-center text-gray-400 mb-8">Choose your challenge.</p>
-            <div class="space-y-4">
-                <div class="mode-card" data-mode="flashcards">
-                    <h3 class="text-xl font-semibold text-gradient text-gradient-cyan">Flashcards</h3>
-                    <p class="text-gray-400">Flip through cards to test your knowledge.</p>
-                </div>
-                <div class="mode-card" data-mode="cheatsheet">
-                    <h3 class="text-xl font-semibold text-gradient text-gradient-blue">Cheat Sheet</h3>
-                    <p class="text-gray-400">Get a quick overview of key concepts.</p>
-                </div>
-                <div class="mode-card" data-mode="quiz">
-                    <h3 class="text-xl font-semibold text-gradient text-gradient-green">Quiz Me!</h3>
-                    <p class="text-gray-400">Take a quiz and earn XP.</p>
-                </div>
-                 <div class="mode-card" data-mode="analytics">
-                    <h3 class="text-xl font-semibold text-gradient text-gradient-purple">Analytics</h3>
-                    <p class="text-gray-400">Track your learning progress.</p>
-                </div>
-            </div>
-            <button class="back-btn" data-target="language-select-page">&larr; Change Language</button>
+    <h2 class="text-3xl font-bold text-center mb-2">
+        How do you want to revise <span id="selected-lang-mode-span" class="text-cyan-400"></span>?
+    </h2>
+    <p class="text-center text-gray-400 mb-8">Choose your challenge.</p>
+    <div class="mode-cards-grid gap-6 mb-8">
+        <div class="mode-card mode-gradient-cyan" data-mode="flashcards">
+            <h3 class="text-xl font-semibold text-gradient text-gradient-cyan">Flashcards</h3>
+            <p class="text-gray-200">Flip through cards to test your knowledge.</p>
         </div>
+        <div class="mode-card mode-gradient-blue" data-mode="cheatsheet">
+            <h3 class="text-xl font-semibold text-gradient text-gradient-blue">Cheat Sheet</h3>
+            <p class="text-gray-200">Get a quick overview of key concepts.</p>
+        </div>
+        <div class="mode-card mode-gradient-green" data-mode="quiz">
+            <h3 class="text-xl font-semibold text-gradient text-gradient-green">Quiz Me!</h3>
+            <p class="text-gray-200">Take a quiz and earn XP.</p>
+        </div>
+        <div class="mode-card mode-gradient-purple" data-mode="analytics">
+            <h3 class="text-xl font-semibold text-gradient text-gradient-purple">Analytics</h3>
+            <p class="text-gray-200">Track your learning progress.</p>
+        </div>
+    </div>
+    <button class="back-btn" data-target="language-select-page">&larr; Change Language</button>
+</div>
 
         <!-- ===== Deck Selection Page (Flashcards) ===== -->
         <div id="deck-select-page" class="page justify-center">
@@ -1209,7 +1256,31 @@
                     ]
                 },
                 quiz: {
-                    beginner: [], intermediate: [], oop: [], marathon: []
+                    beginner: [],
+                    intermediate: [
+                        { q: "Which semantic tag is meant for standalone, self-contained content like a blog post?", options: ["&lt;section&gt;", "&lt;div&gt;", "&lt;article&gt;"], correct: 2 },
+                        { q: "What does the &lt;aside&gt; tag usually represent in a document layout?", options: ["Main content", "Sidebar or additional info", "Navigation links"], correct: 1 },
+                        { q: "Which attribute allows you to identify a single, specific element for CSS or JavaScript?", options: ["name", "class", "id"], correct: 2 },
+                        { q: "Which tag supports the 'controls', 'autoplay', and 'loop' attributes for media playback?", options: ["&lt;audio&gt; only", "&lt;video&gt; only", "Both &lt;audio&gt; and &lt;video&gt;"], correct: 2 },
+                        { q: "What is the primary purpose of the viewport meta tag?", options: ["Improving search engine ranking", "Ensuring responsive design on mobile devices", "Setting the character encoding"], correct: 1 },
+                        { q: "What does the 'contenteditable' global attribute do when set to 'true'?", options: ["Adds a placeholder text", "Makes the element's content editable by the user", "Changes the element's font"], correct: 1 },
+                        { q: "Which HTML5 API provides a more powerful and flexible way to store key-value data in the browser compared to cookies?", options: ["Canvas API", "Geolocation API", "Web Storage API"], correct: 2 },
+                        { q: "Which of these tags is considered deprecated in HTML5 and should be replaced with CSS?", options: ["&lt;center&gt;", "&lt;main&gt;", "&lt;strong&gt;"], correct: 0 },
+                        { q: "The &lt;_____&gt; tag is the correct semantic element for defining the main navigation links in a page.", options: ["nav", "navigation", "menu"], correct: 0 },
+                        { q: "To show the default play/pause and volume interface on a media element, you must add the _____ attribute.", options: ["controls", "player", "buttons"], correct: 0 },
+                        { q: "To ensure universal character display, the recommended charset is &lt;meta charset=\"____\"&gt;.", options: ["UTF-8", "ASCII", "ANSI"], correct: 0 },
+                        { q: "The _____ attribute must be set to 'true' to allow a user to drag an element.", options: ["draggable", "movable", "drag-enabled"], correct: 0 },
+                        { q: "The API that helps you find a user's latitude and longitude is called the __________ API.", options: ["Location API", "Geolocation API", "Mapping API"], correct: 1 },
+                        { q: "The &lt;_____&gt; tag, which formerly made text flash on and off, is now deprecated.", options: ["flash", "blink", "shimmer"], correct: 1 },
+                        { q: "In semantic HTML, which tag is most appropriate for the top section of a page, often containing a logo and title?", options: ["&lt;header&gt;", "&lt;top&gt;", "&lt;section&gt;"], correct: 0 },
+                        { q: "Which meta tag is essential for ensuring your website displays correctly on various mobile devices?", options: ["&lt;meta name='mobile-friendly'&gt;", "&lt;meta name='viewport'&gt;", "&lt;meta name='responsive'&gt;"], correct: 1 },
+                        { q: "Which global attribute is used to provide extra information as a browser tooltip on hover?", options: ["data-info", "alt", "title"], correct: 2 },
+                        { q: "Which element is best suited for embedding a .mp3 music file with playback controls?", options: ["&lt;video&gt;", "&lt;audio&gt;", "&lt;embed&gt;"], correct: 1 },
+                        { q: "Which HTML5 API would you use to draw 2D shapes, charts, and animations directly in the browser?", options: ["Web Graphics API", "Canvas API", "SVG API"], correct: 1 },
+                        { q: "What is the modern, CSS-based alternative to the deprecated &lt;center&gt; tag for centering text?", options: ["align: center;", "position: center;", "text-align: center;"], correct: 2 }
+                    ],
+                    oop: [],
+                    marathon: []
                 }
             },
             javascript: {
@@ -1269,7 +1340,7 @@ else:
                     <h3>🧺 4. Lists – Ordered, changeable, and allows duplicates</h3>
                     ${createCodeWindow(`fruits = ["🍎", "🍌", "🍇"]
 print(fruits[0])         # 🍎
-fruits.append("�")      # Add to end
+fruits.append("🍍")      # Add to end
 fruits.remove("🍌")      # Remove item
 print(len(fruits))       # Count items`)}
                     <p>🛠 Handy tools: <code>fruits.sort()</code>, <code>fruits.reverse()</code></p>
@@ -1325,7 +1396,7 @@ print(math.pi)           # 3.14159...`)}
                     ${createCodeWindow(`import random
 print(random.randint(1, 10))`)}
 
-                    <h3>� 10. File Handling</h3>
+                    <h3>💾 10. File Handling</h3>
                     <p>📝 Create/write a file:</p>
                     ${createCodeWindow(`with open("hello.txt", "w") as f:
     f.write("Hello World!")`)}
@@ -1439,7 +1510,192 @@ s.greet()`)}
                 </div>
             `,
             javascript: `<div class="cheatsheet-content"><h2 class="text-3xl font-bold text-center mb-6 text-cyan-400">Coming Soon</h2></div>`,
-            css: `<div class="cheatsheet-content"><h2 class="text-3xl font-bold text-center mb-6 text-cyan-400">Coming Soon</h2></div>`
+            css: `
+<div class="cheatsheet-content">
+  <h2 class="text-3xl font-bold mb-6 text-gradient text-gradient-blue">🎨 CSS3 Cheat Sheet with Explanations</h2>
+  
+  <h3>🧱 1. CSS Syntax</h3>
+  ${createCodeWindow(`selector {\n  property: value;\n}`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><b>Selector</b> targets HTML elements</li>
+    <li><b>Property</b> defines what to style</li>
+    <li><b>Value</b> sets how it should be styled</li>
+  </ul>
+
+  <h3>🧾 2. Selectors</h3>
+  <table>
+    <thead>
+      <tr><th>Selector</th><th>Description</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>*</code></td><td>Targets all elements</td><td><code>* { margin: 0; }</code></td></tr>
+      <tr><td><code>p</code></td><td>Targets all <code>&lt;p&gt;</code> tags</td><td><code>p {}</code></td></tr>
+      <tr><td><code>.class</code></td><td>Targets elements with class</td><td><code>.box {}</code></td></tr>
+      <tr><td><code>#id</code></td><td>Targets element with specific id</td><td><code>#main {}</code></td></tr>
+      <tr><td><code>element, element</code></td><td>Groups multiple elements</td><td><code>h1, h2 {}</code></td></tr>
+      <tr><td><code>parent &gt; child</code></td><td>Direct child selector</td><td><code>ul &gt; li {}</code></td></tr>
+      <tr><td><code>element:hover</code></td><td>Applies on hover</td><td><code>a:hover {}</code></td></tr>
+      <tr><td><code>[type="text"]</code></td><td>Attribute selector for inputs</td><td><code>input[type="text"] {}</code></td></tr>
+    </tbody>
+  </table>
+  <ul class="list-disc ml-6 mb-4 mt-2">
+    <li><b>Use classes</b> for reusable styles</li>
+    <li><b>Use IDs</b> for unique elements</li>
+  </ul>
+
+  <h3>🖊 3. Fonts & Text</h3>
+  ${createCodeWindow(`font-family: 'Arial', sans-serif;\nfont-size: 16px;\nfont-weight: bold;\ntext-align: center;\ntext-decoration: underline;\ntext-transform: uppercase;\nline-height: 1.5;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><code>font-family</code> → Sets font type</li>
+    <li><code>font-size</code> → Adjusts size</li>
+    <li><code>text-align</code> → Aligns text (left, center, right)</li>
+    <li><code>line-height</code> → Line spacing</li>
+    <li><code>text-transform</code> → Controls casing (e.g., uppercase)</li>
+  </ul>
+
+  <h3>📦 4. Box Model</h3>
+  ${createCodeWindow(`width: 300px;\npadding: 10px;\nborder: 2px solid #000;\nmargin: 20px;\nbox-sizing: border-box;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><code>padding</code> → Space <b>inside</b> the element</li>
+    <li><code>border</code> → Border around content</li>
+    <li><code>margin</code> → Space <b>outside</b> the element</li>
+    <li><code>box-sizing: border-box</code> → Includes padding & border in the total width/height</li>
+  </ul>
+
+  <h3>🎯 5. Colors</h3>
+  ${createCodeWindow(`color: #333;\nbackground-color: lightblue;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li>Colors can be in <b>name</b>, <code>#hex</code>, <code>rgb()</code>, or <code>rgba()</code></li>
+    <li>Use <code>rgba()</code> for <b>opacity</b></li>
+  </ul>
+
+  <h3>🧩 6. Positioning</h3>
+  ${createCodeWindow(`position: relative;\ntop: 20px;\nleft: 10px;\nz-index: 1;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><code>relative</code> → Move element from its normal position</li>
+    <li><code>absolute</code> → Position relative to nearest positioned parent</li>
+    <li><code>fixed</code> → Stuck to screen (even when scrolling)</li>
+    <li><code>sticky</code> → Sticks until a boundary is reached</li>
+    <li><code>z-index</code> → Controls layer (higher = on top)</li>
+  </ul>
+
+  <h3>🖼 7. Background</h3>
+  ${createCodeWindow(`background-image: url('bg.jpg');\nbackground-size: cover;\nbackground-repeat: no-repeat;\nbackground-position: center;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><code>background-size: cover</code> → Scales to fill</li>
+    <li><code>background-repeat: no-repeat</code> → No tiling</li>
+    <li><code>background-position: center</code> → Centered image</li>
+  </ul>
+
+  <h3>🎛 8. Display & Visibility</h3>
+  ${createCodeWindow(`display: none;\nvisibility: hidden;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><code>display: none</code> → Hides and removes space</li>
+    <li><code>visibility: hidden</code> → Hides but <b>keeps space</b></li>
+    <li><code>inline</code> → In-line with other elements</li>
+    <li><code>block</code> → Full-width element</li>
+    <li><code>inline-block</code> → Inline + size control</li>
+    <li><code>flex</code> / <code>grid</code> → Layout modes</li>
+  </ul>
+
+  <h3>🧱 9. Borders & Radius</h3>
+  ${createCodeWindow(`border: 2px dashed blue;\nborder-radius: 10px;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><code>border</code> → Adds line around element</li>
+    <li><code>border-radius</code> → Rounds the corners</li>
+  </ul>
+
+  <h3>🌟 10. Shadows</h3>
+  ${createCodeWindow(`box-shadow: 2px 2px 8px gray;\ntext-shadow: 1px 1px 2px #000;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><code>box-shadow</code> → Shadow outside the box</li>
+    <li><code>text-shadow</code> → Shadow behind text</li>
+  </ul>
+
+  <h3>⚡ 11. Transitions</h3>
+  ${createCodeWindow(`transition: all 0.3s ease-in-out;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li>Makes property changes <b>smooth</b></li>
+    <li><code>ease</code>, <code>linear</code>, <code>ease-in</code>, etc. → Transition effects</li>
+  </ul>
+
+  <h3>🔁 12. Transform</h3>
+  ${createCodeWindow(`transform: scale(1.2) rotate(10deg);`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li>Used to <b>rotate, scale, move</b> elements</li>
+  </ul>
+
+  <h3>🌀 13. Animation</h3>
+  ${createCodeWindow(`@keyframes slideIn {\n  from { transform: translateX(-100%); }\n  to { transform: translateX(0); }\n}\n\n.element {\n  animation: slideIn 1s ease-out;\n}`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li>Animations allow dynamic movement</li>
+    <li>Use <code>@keyframes</code> to define states</li>
+  </ul>
+
+  <h3>🧲 14. Flexbox</h3>
+  ${createCodeWindow(`display: flex;\nflex-direction: row;\njustify-content: center;\nalign-items: center;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><code>flex</code> → One-dimensional layout</li>
+    <li><code>justify-content</code> → Main axis alignment</li>
+    <li><code>align-items</code> → Cross axis alignment</li>
+  </ul>
+
+  <h3>🗃 15. Grid</h3>
+  ${createCodeWindow(`display: grid;\ngrid-template-columns: repeat(3, 1fr);\ngap: 20px;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li><code>grid</code> → Two-dimensional layout</li>
+    <li><code>repeat(3, 1fr)</code> → 3 equal columns</li>
+    <li><code>gap</code> → Space between rows/columns</li>
+  </ul>
+
+  <h3>🧠 16. Media Queries</h3>
+  ${createCodeWindow(`@media (max-width: 768px) {\n  body {\n    background: lightgray;\n  }\n}`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li>Make designs <b>responsive</b> for screens</li>
+    <li>Triggers styles at certain widths</li>
+  </ul>
+
+  <h3>📌 17. CSS Variables</h3>
+  ${createCodeWindow(`:root {\n  --main-color: #ff6600;\n}\n\nh1 {\n  color: var(--main-color);\n}`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li>Declare once, use everywhere</li>
+    <li>Easily theme your website</li>
+  </ul>
+
+  <h3>📏 18. Units</h3>
+  <table>
+    <thead>
+      <tr><th>Unit</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>px</code></td><td>Fixed pixels</td></tr>
+      <tr><td><code>%</code></td><td>Relative to parent</td></tr>
+      <tr><td><code>em</code></td><td>Relative to parent font-size</td></tr>
+      <tr><td><code>rem</code></td><td>Relative to root font-size</td></tr>
+      <tr><td><code>vw</code></td><td>1% of viewport width</td></tr>
+      <tr><td><code>vh</code></td><td>1% of viewport height</td></tr>
+    </tbody>
+  </table>
+
+  <h3>🛑 19. !important</h3>
+  ${createCodeWindow(`color: red !important;`)}
+  <ul class="list-disc ml-6 mb-4">
+    <li>Forces style even if overridden</li>
+    <li><b>Use sparingly</b> — it's hard to debug</li>
+  </ul>
+
+  <h3>✅ 20. Best Practices</h3>
+  <ul class="list-disc ml-6 mb-2">
+    <li>Organize CSS with comments</li>
+    <li>Use external stylesheets</li>
+    <li>Prefer class selectors</li>
+    <li>Use <code>rem</code> or <code>%</code> for scalable design</li>
+    <li>DRY: Don't Repeat Yourself — use variables</li>
+  </ul>
+</div>
+`
+
+//...
         };
 
 
@@ -1450,8 +1706,8 @@ s.greet()`)}
                 "🔵 Object-Oriented Programming": ["🏛️ Classes & Objects", "🛠️ Constructors", "👨‍👩‍👧‍👦 Inheritance", "🎭 Polymorphism", "💊 Encapsulation"]
             },
             html: {
-                "🟢 Beginner-Level": ["📄 Document Structure", "✍️ Text Formatting", "🔗 Links", "🖼️ Images", "📋 Lists", "📝 Forms", "📊 Tables", "🗨️ HTML Comments", "🧩 HTML Entities"],
-                "🟡 Intermediate-Level": ["🧠 Semantic Tags", "🎥 Multimedia in HTML (Audio & Video)", "🔍 Meta Tags", "⚙️ Global Attributes", "📦 HTML APIs", "⚠️ Deprecated HTML Elements"]
+                "🧱 HTML Fundamentals": ["📄 Document Structure", "✍️ Text Formatting", "🔗 Links", "🖼️ Images", "📋 Lists", "📝 Forms", "📊 Tables", "🗨️ HTML Comments", "🧩 HTML Entities"],
+                "🚀 Advanced HTML5 Features": ["🧠 Semantic Tags", "🎥 Multimedia in HTML (Audio & Video)", "🔍 Meta Tags", "⚙️ Global Attributes", "📦 HTML APIs", "⚠️ Deprecated HTML Elements"]
             },
             javascript: {
                 "🟢 Beginner-Level": ["General"]
@@ -2380,4 +2636,3 @@ s.greet()`)}
     </script>
 </body>
 </html>
-�
