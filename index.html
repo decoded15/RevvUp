@@ -1182,6 +1182,30 @@
                         { q: "What is the draggable attribute?", a: "Allows dragging of an element." + createCodeWindow('<img draggable="true" src="img.png">') },
                         { q: "Use of tabindex attribute?", a: "Controls keyboard tab order for focusable elements." },
                         { q: "What does data-* attribute do?", a: "Stores custom data for JavaScript." + createCodeWindow('<div data-user="123">...</div>') }
+                    ],
+                    "📦 HTML APIs": [
+                        { q: "What is an HTML API?", a: "An interface provided by the browser to let HTML/JS interact with web features like audio, video, storage, location, etc." },
+                        { q: "What does the Geolocation API do?", a: "It provides the user's location (with permission)." + createCodeWindow('navigator.geolocation.getCurrentPosition(success)') },
+                        { q: "How do you store data in the browser with HTML APIs?", a: "Use the Web Storage API: localStorage or sessionStorage" + createCodeWindow('localStorage.setItem("name", "Dibyansh");') },
+                        { q: "What's the use of the Drag and Drop API?", a: 'It allows users to drag items and drop them in specific locations. Elements use attributes like draggable="true"' },
+                        { q: "What is the Canvas API used for?", a: "Drawing graphics (2D shapes, images, animations)." + createCodeWindow('<canvas id="myCanvas"></canvas>') },
+                        { q: "What’s the difference between localStorage and sessionStorage?", a: "<b>localStorage</b>: persists even after browser closes<br><b>sessionStorage</b>: cleared when the tab is closed" },
+                        { q: "What is the purpose of the Web Workers API?", a: "Run JavaScript in the background without blocking the UI." },
+                        { q: "What does the fetch() API do in HTML/JS?", a: "It makes network requests (AJAX-like)." + createCodeWindow("fetch('/api/data').then(res => res.json())") },
+                        { q: "Can HTML APIs access user devices (camera, mic)?", a: "Yes, using the MediaDevices API (getUserMedia) with permissions." + createCodeWindow("navigator.mediaDevices.getUserMedia({ video: true })") },
+                        { q: "Is the Web Storage API part of HTML5?", a: "Yes! HTML5 introduced Web Storage to replace cookies for simple data storage." }
+                    ],
+                    "⚠️ Deprecated HTML Elements": [
+                        { q: "What does 'deprecated' mean in HTML?", a: "It means the tag or feature is outdated and should not be used in modern HTML." },
+                        { q: "Which tag is deprecated: <font> or <strong>?", a: "<code>&lt;font&gt;</code> is deprecated; use CSS instead." },
+                        { q: "What's the modern replacement for <center>?", a: "Use CSS:" + createCodeWindow('text-align: center;') },
+                        { q: "Which tag was used to add blinking text and is now deprecated?", a: "<code>&lt;blink&gt;</code> — it’s no longer supported in modern browsers." },
+                        { q: "Why was <marquee> deprecated?", a: "It creates scrolling text but is non-standard and inconsistent across browsers." },
+                        { q: "Is <big> still recommended?", a: "No, it’s deprecated. Use CSS like font-size instead." },
+                        { q: "What tag replaced <u> for underlined text?", a: "<code>&lt;u&gt;</code> is still valid, but for emphasis or styling, use <code>&lt;span&gt;</code> with CSS." },
+                        { q: "What are some common deprecated tags?", a: "<code>&lt;font&gt;</code>, <code>&lt;center&gt;</code>, <code>&lt;marquee&gt;</code>, <code>&lt;applet&gt;</code>, <code>&lt;basefont&gt;</code>, <code>&lt;dir&gt;</code>" },
+                        { q: "How do we style text size instead of using <big> or <small>?", a: "Use CSS:" + createCodeWindow('font-size: 1.5em;') },
+                        { q: "Should deprecated tags still be learned?", a: "Understand them for legacy code, but avoid using them in new projects." }
                     ]
                 },
                 quiz: {
@@ -1245,7 +1269,7 @@ else:
                     <h3>🧺 4. Lists – Ordered, changeable, and allows duplicates</h3>
                     ${createCodeWindow(`fruits = ["🍎", "🍌", "🍇"]
 print(fruits[0])         # 🍎
-fruits.append("🍍")      # Add to end
+fruits.append("�")      # Add to end
 fruits.remove("🍌")      # Remove item
 print(len(fruits))       # Count items`)}
                     <p>🛠 Handy tools: <code>fruits.sort()</code>, <code>fruits.reverse()</code></p>
@@ -1359,30 +1383,59 @@ s.greet()`)}
             `,
             html: `
                 <div class="cheatsheet-content">
-                    <h2 class="text-3xl font-bold text-center mb-6 text-cyan-400">📄 HTML5 Cheatsheet</h2>
-                    <h3>Document Structure</h3>
-                     ${createCodeWindow(`<!DOCTYPE html>
+                    <h2 class="text-3xl font-bold text-center mb-6 text-cyan-400">🌐 HTML5 Complete Cheat Sheet</h2>
+                    <h3>🧱 Basic Structure</h3>
+                    ${createCodeWindow(`<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document Title</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My HTML5 Page</title>
 </head>
 <body>
-    <!-- Visible content goes here -->
+  <!-- Content goes here -->
 </body>
 </html>`)}
-                    <h3>Text Elements</h3>
-                     ${createCodeWindow(`<h1>Heading 1</h1> to <h6>Heading 6</h6>
-<p>This is a paragraph.</p>
-<strong>Bold (important)</strong>
-<em>Italic (emphasis)</em>
-<a href="https://example.com">This is a link</a>`)}
-                    <h3>Lists</h3>
+                    <h3>📝 Headings, Paragraphs & Text</h3>
+                    ${createCodeWindow(`<h1> to <h6>Headings (h1 is largest)<h1>Main Heading</h1><p>Paragraph<p>This is text.</p><br>Line breakLine 1<br>Line 2<hr>Horizontal line<hr><strong>Important (bold)<strong>Alert!</strong><em>Emphasized (italic)<em>Note this!</em><mark>Highlights text<mark>Important</mark><abbr>Abbreviation<abbr title="World Health Org">WHO</abbr>`)}
+                    <h3>🔗 Links & Navigation</h3>
+                    ${createCodeWindow(`<a href="https://example.com" target="_blank" rel="noopener">Visit Site</a>
+<nav>
+  <a href="/home">Home</a>
+  <a href="/about">About</a>
+</nav>`)}
+                    <h3>🖼️ Images</h3>
+                    ${createCodeWindow(`<img src="img.jpg" alt="Description" width="300" loading="lazy">`)}
+                    <h3>📋 Lists</h3>
                     <p>Unordered List:</p>
-                    ${createCodeWindow(`<ul>\n  <li>Item 1</li>\n  <li>Item 2</li>\n</ul>`)}
-                     <p>Ordered List:</p>
-                    ${createCodeWindow(`<ol>\n  <li>First</li>\n  <li>Second</li>\n</ol>`)}
+                    ${createCodeWindow(`<ul>\n  <li>Milk</li>\n  <li>Bread</li>\n</ul>`)}
+                    <p>Ordered List:</p>
+                    ${createCodeWindow(`<ol>\n  <li>One</li>\n  <li>Two</li>\n</ol>`)}
+                    <h3>📐 Tables</h3>
+                    ${createCodeWindow(`<table>
+  <thead>
+    <tr><th>Name</th><th>Age</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Dibs</td><td>19</td></tr>
+  </tbody>
+</table>`)}
+                    <h3>🧩 Semantic Elements (HTML5 Additions)</h3>
+                    ${createCodeWindow(`<header>Top section (logo, nav)<footer>Bottom (copyright, links)<main>Main content of page<section>Logical sections<article>Self-contained content<aside>Sidebars, tips<figure> / <figcaption>Images with captions<details> / <summary>Expandable/collapsible content`)}
+                    <h3>🎮 Forms & Input Types</h3>
+                    ${createCodeWindow(`<form action="/submit" method="post">
+  <label for="email">Email:</label>
+  <input type="email" id="email" required>
+  <button type="submit">Send</button>
+</form>`)}
+                    <h3>📦 Media Tags</h3>
+                    ${createCodeWindow(`<video controls width="300">
+  <source src="movie.mp4" type="video/mp4">
+</video>
+
+<audio controls>
+  <source src="sound.mp3" type="audio/mpeg">
+</audio>`)}
                 </div>
             `,
             javascript: `<div class="cheatsheet-content"><h2 class="text-3xl font-bold text-center mb-6 text-cyan-400">Coming Soon</h2></div>`,
@@ -1398,7 +1451,7 @@ s.greet()`)}
             },
             html: {
                 "🟢 Beginner-Level": ["📄 Document Structure", "✍️ Text Formatting", "🔗 Links", "🖼️ Images", "📋 Lists", "📝 Forms", "📊 Tables", "🗨️ HTML Comments", "🧩 HTML Entities"],
-                "🟡 Intermediate-Level": ["🧠 Semantic Tags", "🎥 Multimedia in HTML (Audio & Video)", "🔍 Meta Tags", "⚙️ Global Attributes"]
+                "🟡 Intermediate-Level": ["🧠 Semantic Tags", "🎥 Multimedia in HTML (Audio & Video)", "🔍 Meta Tags", "⚙️ Global Attributes", "📦 HTML APIs", "⚠️ Deprecated HTML Elements"]
             },
             javascript: {
                 "🟢 Beginner-Level": ["General"]
@@ -2327,3 +2380,4 @@ s.greet()`)}
     </script>
 </body>
 </html>
+�
