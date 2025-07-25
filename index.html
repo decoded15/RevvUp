@@ -1090,29 +1090,29 @@
                     "📝 Forms": [
                         { q: "What is the basic structure of a form in HTML?", a: 'Use the &lt;form&gt; tag with action and method.' + createCodeWindow('<form action="/submit" method="POST">\n  <!-- form inputs -->\n</form>') },
                         { q: "What are the most common input types?", a: "text, email, password, radio, checkbox, submit, file." },
-                        { q: "How do you create a text input with a label?", a: '<label for="name">Name:</label>\n<input type="text" id="name" name="username">' },
+                        { q: "How do you create a text input with a label?", a: createCodeWindow('<label for="name">Name:</label>\n<input type="text" id="name" name="username">') },
                         { q: "How to group inputs under a common heading?", a: 'Use &lt;fieldset&gt; and &lt;legend&gt;.' + createCodeWindow('<fieldset>\n  <legend>Contact Info</legend>\n  <input type="email">\n</fieldset>') },
-                        { q: "How to create a dropdown menu?", a: '<select name="car">\n  <option value="bmw">BMW</option>\n  <option value="audi">Audi</option>\n</select>' },
+                        { q: "How to create a dropdown menu?", a: createCodeWindow('<select name="car">\n  <option value="bmw">BMW</option>\n  <option value="audi">Audi</option>\n</select>') },
                         { q: "How to make a required field?", a: 'Add the required attribute.' + createCodeWindow('<input type="text" required>') },
                         { q: "How to validate input pattern in a form?", a: 'Use the pattern attribute with regex.' + createCodeWindow('<input type="text" pattern="[A-Za-z]{3}">') },
                         { q: "How to allow file uploads?", a: 'Use enctype="multipart/form-data" and input type="file".' + createCodeWindow('<form enctype="multipart/form-data">\n  <input type="file" name="myfile">\n</form>') },
-                        { q: "How to create a radio button group?", a: '<input type="radio" name="gender" value="male"> Male\n<input type="radio" name="gender" value="female"> Female' },
+                        { q: "How to create a radio button group?", a: createCodeWindow('<input type="radio" name="gender" value="male"> Male\n<input type="radio" name="gender" value="female"> Female') },
                         { q: "How do you disable or make an input read-only?", a: 'Use disabled or readonly attributes.' + createCodeWindow('<input type="text" disabled>\n<input type="text" readonly>') }
                     ],
                     "📊 Tables": [
                         { q: "What tags are used to create a basic HTML table?", a: '<code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code>.' + createCodeWindow('<table>\n  <tr><th>Name</th><th>Age</th></tr>\n  <tr><td>Dibyansh</td><td>20</td></tr>\n</table>') },
                         { q: "How to add table headings?", a: "Use <code>&lt;th&gt;</code> inside <code>&lt;tr&gt;</code> for headings (bold + centered by default)." },
                         { q: "What’s the difference between &lt;thead&gt;, &lt;tbody&gt;, and &lt;tfoot&gt;?", a: "They separate sections of the table — header, body, and footer." },
-                        { q: "How to merge two columns or rows?", a: "Use colspan or rowspan." + createCodeWindow('<td colspan="2">Merged</td>') },
-                        { q: "How to add a border to a table?", a: '<table border="1">...</table>' },
+                        { q: "How to merge two columns or rows?", a: "Use colspan or rowspan." + createCodeWindow('<td colspan="2">Merged</td>\n<td rowspan="2">Merged</td>') },
+                        { q: "How to add a border to a table?", a: 'Use the border attribute (or CSS for better styling).' + createCodeWindow('<table border="1">...</table>') },
                         { q: "How to create a caption/title for a table?", a: "Use the <code>&lt;caption&gt;</code> tag just after <code>&lt;table&gt;</code>." },
-                        { q: "How to align table content?", a: "Use text-align and vertical-align via CSS or align attribute." },
+                        { q: "How to align table content?", a: "Use text-align and vertical-align via CSS for better control." },
                         { q: "What’s the use of &lt;colgroup&gt; and &lt;col&gt;?", a: "Used to style or apply attributes to entire columns." },
                         { q: "How to add zebra striping (alternating row colors)?", a: "Use nth-child in CSS." + createCodeWindow('tr:nth-child(even) { background: #eee; }') },
                         { q: "Can you nest tables inside another table?", a: "Yes, you can place a <code>&lt;table&gt;</code> inside a <code>&lt;td&gt;</code>." }
                     ],
                     "🗨️ HTML Comments": [
-                        { q: "How do you write a comment in HTML?", a: '<!-- This is a comment -->' },
+                        { q: "How do you write a comment in HTML?", a: createCodeWindow('<!-- This is a comment -->') },
                         { q: "Can comments span multiple lines?", a: 'Yes.' + createCodeWindow('<!--\n  This is a multi-line\n  comment in HTML\n-->') },
                         { q: "Are comments rendered by the browser?", a: "No, they are completely ignored in display but visible in the page source." },
                         { q: "Can you use comments to disable elements temporarily?", a: 'Yes.' + createCodeWindow('<!-- <p>This won\'t show up.</p> -->') },
@@ -1124,16 +1124,64 @@
                         { q: "What's a good use case for HTML comments?", a: "Labeling sections, explaining complex structures, or reminders." }
                     ],
                     "🧩 HTML Entities": [
-                        { q: "What is an HTML entity?", a: 'A code that represents a special character in HTML. Example: &lt; = <' },
-                        { q: "How do you write an HTML entity?", a: 'Use &name; or &#code; Example: &amp; or &#38;' },
-                        { q: "What does &lt; stand for?", a: "It stands for the less-than symbol <" },
+                        { q: "What is an HTML entity?", a: 'A code that represents a special character in HTML. Example: &lt; stands for <' },
+                        { q: "How do you write an HTML entity?", a: 'Use &name; or &#code;.' + createCodeWindow('&amp; or &#38;') },
+                        { q: "What does &lt; stand for?", a: "It stands for the less-than symbol <." },
                         { q: "How do you show a space using an entity?", a: "Use &nbsp; for a non-breaking space." },
                         { q: 'How do you write " in HTML safely?', a: 'Use &quot;' },
                         { q: "How do you write an apostrophe ' using an entity?", a: "Use &apos; or &#39;" },
                         { q: "What does &copy; render as?", a: "It renders the copyright symbol: ©" },
                         { q: "What entity represents the ampersand (&) itself?", a: "&amp;" },
                         { q: "Why use entities instead of typing the character directly?", a: "To prevent conflicts with HTML syntax and ensure proper display." },
-                        { q: "How do you display the euro (€) symbol?", a: 'Named: &euro;\nNumeric: &#8364;' }
+                        { q: "How do you display the euro (€) symbol?", a: 'Named: &euro; <br> Numeric: &#8364;' }
+                    ],
+                    "🧠 Semantic Tags": [
+                        { q: "What are semantic tags in HTML?", a: "Tags that convey the meaning of the content inside them. Example: <code>&lt;article&gt;</code>, <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>" },
+                        { q: "How is &lt;div&gt; different from a semantic tag?", a: "<code>&lt;div&gt;</code> is non-semantic (generic), while tags like <code>&lt;section&gt;</code> have meaning." },
+                        { q: "What tag defines the header of a section or page?", a: "<code>&lt;header&gt;</code>" },
+                        { q: "What tag represents the main content of a page?", a: "<code>&lt;main&gt;</code>" },
+                        { q: "Which tag is used for site navigation?", a: "<code>&lt;nav&gt;</code>" },
+                        { q: "What is the purpose of the &lt;article&gt; tag?", a: "It defines independent, self-contained content like a blog post." },
+                        { q: "Which tag groups related content, like a section within an article?", a: "<code>&lt;section&gt;</code>" },
+                        { q: "What does the &lt;aside&gt; tag do?", a: "Represents content indirectly related to the main content (like a sidebar or note)." },
+                        { q: "What does &lt;footer&gt; tag represent?", a: "The bottom of a section/page — usually contains contact info, copyright, etc." },
+                        { q: "Why are semantic tags important for accessibility?", a: "Screen readers and search engines better understand page structure." }
+                    ],
+                    "🎥 Multimedia in HTML (Audio & Video)": [
+                        { q: "Which tag is used to embed audio?", a: "<code>&lt;audio&gt;</code>" + createCodeWindow('<audio controls src="music.mp3"></audio>') },
+                        { q: "What tag is used to embed video?", a: "<code>&lt;video&gt;</code>" + createCodeWindow('<video controls width="320" height="240" src="video.mp4"></video>') },
+                        { q: "What attribute allows user control (play, pause, volume)?", a: "<code>controls</code>" },
+                        { q: "How do you add fallback text for browsers that don’t support video?", a: "Place fallback inside the tag:" + createCodeWindow('<video>Your browser does not support the video tag.</video>') },
+                        { q: "Can you autoplay audio/video when the page loads?", a: "Yes, use <code>autoplay</code> (⚠️ may be blocked by browsers, often requires <code>muted</code>)." + createCodeWindow('<video autoplay muted></video>') },
+                        { q: "How to loop a video or audio file?", a: "Use the <code>loop</code> attribute." + createCodeWindow('<audio loop src="track.mp3"></audio>') },
+                        { q: "What does the muted attribute do?", a: "Starts media playback without sound." },
+                        { q: "How to preload a video/audio?", a: 'Use <code>preload="auto"</code>, <code>"metadata"</code>, or <code>"none"</code>.' },
+                        { q: "Can &lt;source&gt; be used with &lt;audio&gt; and &lt;video&gt;?", a: "Yes, to provide multiple media formats." + createCodeWindow('<video controls>\n  <source src="video.mp4" type="video/mp4">\n  <source src="video.webm" type="video/webm">\n</video>') },
+                        { q: "Is Flash required for video in HTML5?", a: "No! HTML5 eliminated the need for Flash plugins." }
+                    ],
+                    "🔍 Meta Tags": [
+                        { q: "Where do meta tags go in an HTML document?", a: "Inside the <code>&lt;head&gt;</code> section." },
+                        { q: 'What does this meta tag do? <meta charset="UTF-8">', a: "Sets character encoding to UTF-8." },
+                        { q: "Which meta tag controls how your page appears on search engines?", a: createCodeWindow('<meta name="description" content="Page summary here.">') },
+                        { q: "How do you tell browsers to scale for mobile devices?", a: createCodeWindow('<meta name="viewport" content="width=device-width, initial-scale=1.0">') },
+                        { q: "What meta tag prevents search engines from indexing your page?", a: createCodeWindow('<meta name="robots" content="noindex">') },
+                        { q: 'What does http-equiv="refresh" do?', a: "Refreshes or redirects the page." + createCodeWindow('<meta http-equiv="refresh" content="5;url=page2.html">') },
+                        { q: "Can meta tags affect SEO?", a: "Yes, especially description, keywords, and robots." },
+                        { q: 'Is <meta charset="UTF-8"> required?', a: "It's highly recommended for consistent character display." },
+                        { q: "What’s the purpose of meta keywords?", a: "Older SEO technique (now mostly ignored by Google)." },
+                        { q: "How to define author information?", a: createCodeWindow('<meta name="author" content="Dibyansh Mohanty">') }
+                    ],
+                    "⚙️ Global Attributes": [
+                        { q: "What is a global attribute?", a: "An attribute that can be applied to any HTML tag." },
+                        { q: "What does the id attribute do?", a: "Assigns a unique identifier." + createCodeWindow('<p id="para1">...</p>') },
+                        { q: "What’s the use of the class attribute?", a: "Groups elements for CSS or JS." + createCodeWindow('<div class="card"></div>') },
+                        { q: "What does the style attribute do?", a: "Adds inline CSS." + createCodeWindow('<h1 style="color:red;">Hi</h1>') },
+                        { q: "How is the title attribute used?", a: "Shows a tooltip on hover." + createCodeWindow('<abbr title="World Health Organization">WHO</abbr>') },
+                        { q: "What does hidden do?", a: "Hides the element from the page." + createCodeWindow('<p hidden>This won\'t display</p>') },
+                        { q: "Purpose of contenteditable?", a: "Makes the element’s text editable by the user." + createCodeWindow('<div contenteditable="true">Edit me!</div>') },
+                        { q: "What is the draggable attribute?", a: "Allows dragging of an element." + createCodeWindow('<img draggable="true" src="img.png">') },
+                        { q: "Use of tabindex attribute?", a: "Controls keyboard tab order for focusable elements." },
+                        { q: "What does data-* attribute do?", a: "Stores custom data for JavaScript." + createCodeWindow('<div data-user="123">...</div>') }
                     ]
                 },
                 quiz: {
@@ -1349,7 +1397,8 @@ s.greet()`)}
                 "🔵 Object-Oriented Programming": ["🏛️ Classes & Objects", "🛠️ Constructors", "👨‍👩‍👧‍👦 Inheritance", "🎭 Polymorphism", "💊 Encapsulation"]
             },
             html: {
-                "🟢 Beginner-Level": ["📄 Document Structure", "✍️ Text Formatting", "🔗 Links", "🖼️ Images", "📋 Lists", "📝 Forms", "📊 Tables", "🗨️ HTML Comments", "🧩 HTML Entities"]
+                "🟢 Beginner-Level": ["📄 Document Structure", "✍️ Text Formatting", "🔗 Links", "🖼️ Images", "📋 Lists", "📝 Forms", "📊 Tables", "🗨️ HTML Comments", "🧩 HTML Entities"],
+                "🟡 Intermediate-Level": ["🧠 Semantic Tags", "🎥 Multimedia in HTML (Audio & Video)", "🔍 Meta Tags", "⚙️ Global Attributes"]
             },
             javascript: {
                 "🟢 Beginner-Level": ["General"]
